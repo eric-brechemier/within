@@ -20,7 +20,7 @@ AUTHOR
 LICENSE
 -------
 
-  [MIT License][MIT] for the code and documentation  
+  [MIT License][MIT]  
   [LICENSE.txt](LICENSE.txt)
 
   [MIT]: http://opensource.org/licenses/MIT
