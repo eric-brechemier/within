@@ -80,8 +80,6 @@ AUTHOR
 LICENSE
 -------
 
-  [MIT License][MIT]  
-  [LICENSE.txt](LICENSE.txt)
-
-  [MIT]: http://opensource.org/licenses/MIT
+  CC0 - No Copyright  
+  https://creativecommons.org/publicdomain/zero/1.0/
 
