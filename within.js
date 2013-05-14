@@ -1,13 +1,13 @@
 // https://github.com/eric-brechemier/within (License: CC0)
 // within is a factory of semi-private spaces
 // where properties and events can be shared.
+// Usage: within("your.domain", function(get, set, publish, subscribe){ ... });
 
 // from sub/nada/privately.js (CC0)
 function privately( func ) {
   return func();
 }
 
-// Usage: within("example.domain", function(get,set,publish,subscribe){ ... });
 var within = privately(function() {
   var
     dataSpaces = {},
