@@ -8,7 +8,7 @@ function privately( func ) {
   return func();
 }
 
-var within = privately(function() {
+privately(function() {
   var
     dataSpaces = {},
     eventSpaces = {},
@@ -196,5 +196,5 @@ var within = privately(function() {
     return callback.apply( dataSpace, [ get, set, publish, subscribe ] );
   }
 
-  return within;
+  this.within = within;
 });
