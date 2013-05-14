@@ -20,6 +20,9 @@ log( test(function() {
     subscribe1too,
     subscribe2;
 
+  assert( typeof within === "function",
+                                "within is expected to be a global function");
+
   within( MODULE1, function( get, set, publish, subscribe ) {
     module1 = this;
     get1 = get;
