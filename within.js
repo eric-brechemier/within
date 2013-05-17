@@ -128,22 +128,13 @@ privately(function() {
     }
 
     /*
-      Set the value of a property and fire listeners registered in this module
-      for the event of the same name
+      Set the value of a property and fire listeners registered for this event,
+      in this module, and in this module only, until a listener returns true or
+      all listeners have been called.
 
       Parameters:
         name - string, the name of an event and the associated property
         value - any, the new value of the property, also provided to listeners
-
-      Notes:
-        1) Only listeners registered in this module are triggered: listeners
-        for an event of the same name in a module with a different name are
-        not fired.
-
-        2) The publication of the event will be interrupted by any listener
-        that returns the boolean value true. The following listeners, that
-        were registered later, will not be notified of the current value of
-        the event.
     */
     function publish( name, value ) {
       var listeners;
