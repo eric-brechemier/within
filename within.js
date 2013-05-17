@@ -14,6 +14,12 @@ privately(function() {
     eventSpaces = {},
     has;
 
+  // from sub/nada/no.js (CC0)
+  function no( value ) {
+    var undef; // do not trust global undefined, which can be set to a value
+    return value === null || value === undef;
+  }
+
   // from sub/nada/copy.js (CC0)
   function copy( array ) {
     return [].concat( array );
@@ -179,7 +185,7 @@ privately(function() {
       }
       listeners = eventSpace[name];
       listeners.push( listener );
-      if ( has( dataSpace, name ) ) {
+      if ( has( dataSpace, name ) && !no( dataSpace[name] ) ) {
         listener( dataSpace[name] );
       }
       return function unsubscribe() {
