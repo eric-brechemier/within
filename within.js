@@ -58,6 +58,9 @@ privately(function() {
     Example:
       var has = alias( Object.prototype.hasOwnProperty );
       has( object, name ) === object.hasOwnProperty( name ); // true
+
+    Parameter:
+      func - function, a method part of the prototype of a Constructor
   */
   function alias( func ) {
     return bind( func.call, func );
