@@ -158,20 +158,19 @@ privately(function() {
       Parameters:
         name - string, the name of an event and the related property
         listener - function( value ), the callback triggered immediately
-                   with the current value of the property, if already set,
-                   and each time a new value is published for this property
-                   (not just set) unless a previous callback returns true
-                   which interrupts the publication of the current event.
 
       Returns:
         function(), the function to call to remove current listener, which
         will no longer receive notifications for given event.
 
       Notes:
-        1) In case the same listener is registered multiple times for the same
-        event, duplicate listeners are removed at the same time.
-        2) In case the same listener is registered to different events,
-        other subscriptions remain active and must be canceled separately.
+        1) Callbacks are triggered immediately when the value of the property
+        is set, not null or undefined
+        2) Callbacks are triggered when any value is published, even the same
+        as current value, or null or undefined
+        3) In case the same listener is registered multiple times, duplicate
+        listeners for the same event are removed at the same time, while any
+        subscription of the same listener to other events remains active.
     */
     function subscribe( name, listener ) {
       var listeners;

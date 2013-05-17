@@ -186,10 +186,10 @@ log( test(function() {
 
   unsubscribeC = subscribe1too( "one", observerC );
   assert(
-    valuesC.length === 1 &&
-    valuesC[0] === null,
-                            "callback is expected to be called immediately " +
-                                           "even when initial value is null" );
+    valuesC.length === 0,
+                        "callback is not expected to be called immediately " +
+                                                "when initial value is null" );
+
   assert(
     valuesB.length === 2,
                      "other observers are not expected to be notified again" );
@@ -213,8 +213,15 @@ log( test(function() {
   "same value expected to be set in different instances of the same module " +
                                                "after an event is published" );
 
+  publish1too( "one" );
+  assert( get1( "one" ) === undefined,
+              "omitted value in publish is expected to be set as undefined" );
+
   subscribe1too( "one", observerC );
-  valuesC = [];
+  assert(
+    valuesC.length === 0,
+                        "callback is not expected to be called immediately " +
+                                          "when initial value is undefined" );
 
   publish1( "one", ONE );
   assert(
