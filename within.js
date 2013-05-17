@@ -54,9 +54,10 @@ privately(function() {
     Define an alias for a prototype function
     The alias allows to call the function with the context object
     as first argument, followed with regular arguments of the function.
+
     Example:
-    has = alias( Object.prototype.hasOwnProperty );
-    object.hasOwnProperty( name ) === has( object, name ); // true
+      var has = alias( Object.prototype.hasOwnProperty );
+      has( object, name ) === object.hasOwnProperty( name ); // true
   */
   function alias( func ) {
     return bind( func.call, func );
