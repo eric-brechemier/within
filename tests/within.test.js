@@ -203,8 +203,8 @@ log( test(function() {
   assert(
     valuesB.length === 3 &&
     valuesB[2] === ONE &&
-    valuesC.length === 2 &&
-    valuesC[1] === ONE,
+    valuesC.length === 1 &&
+    valuesC[0] === ONE,
                                  "same notification expected for observers " +
                                 "in different instances of the same module" );
   assert(
@@ -213,22 +213,35 @@ log( test(function() {
   "same value expected to be set in different instances of the same module " +
                                                "after an event is published" );
 
+  publish1( "one", ONE );
+  assert(
+    valuesB.length === 4 &&
+    valuesB[3] === ONE &&
+    valuesC.length === 2 &&
+    valuesC[1] === ONE,
+                              "observers are expected to be notified again " +
+                                     "even when the same value is published" );
+
   publish1too( "one" );
   assert( get1( "one" ) === undefined,
               "omitted value in publish is expected to be set as undefined" );
 
+  assert(
+    valuesB.length === 5 &&
+    valuesB[4] === undefined &&
+    valuesC.length === 3 &&
+    valuesC[2] === undefined,
+         "undefined value is expected to be published when value is omitted");
+
   subscribe1too( "one", observerC );
   assert(
-    valuesC.length === 0,
+    valuesC.length === 3,
                         "callback is not expected to be called immediately " +
                                           "when initial value is undefined" );
 
-  publish1( "one", ONE );
-  assert(
-    valuesB.length === 4 &&
-    valuesB[3] === ONE,
-                              "observers are expected to be notified again " +
-                                     "even when the same value is published" );
+  valuesC = [];
+  publish1too( "one", ONE );
+
   assert(
     valuesC.length === 2 &&
     valuesC[0] === ONE &&
