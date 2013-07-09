@@ -1,3 +1,6 @@
 [submodule "sub/nada"]
 	path = sub/nada
 	url = git@github.com:eric-brechemier/nada.git
+[submodule "sub/nadasurf"]
+	path = sub/nadasurf
+	url = git@github.com:eric-brechemier/nadasurf.git
