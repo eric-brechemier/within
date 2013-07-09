@@ -56,18 +56,7 @@ privately(function() {
     };
   }
 
-  /*
-    Define an alias for a prototype function
-    The alias allows to call the function with the context object
-    as first argument, followed with regular arguments of the function.
-
-    Example:
-      var has = alias( Object.prototype.hasOwnProperty );
-      has( object, name ) === object.hasOwnProperty( name ); // true
-
-    Parameter:
-      func - function, a method part of the prototype of a Constructor
-  */
+  // from sub/nadasurf/alias.js (CC0)
   function alias( func ) {
     return bind( func.call, func );
   }
