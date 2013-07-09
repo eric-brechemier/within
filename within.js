@@ -29,7 +29,7 @@ privately(function() {
   function remove( array, value ) {
     var i;
     for ( i = array.length; i >= 0; i-- ) {
-      if ( array[i] === value ){
+      if ( array[ i ] === value ){
         array.splice( i, 1 );
       }
     }
@@ -43,7 +43,7 @@ privately(function() {
       length = array.length;
 
     for ( i = 0; i < length && !isBreak ; i++ ){
-      isBreak = callback( array[i], i ) === true;
+      isBreak = callback( array[ i ], i ) === true;
     }
 
     return isBreak;
@@ -86,12 +86,12 @@ privately(function() {
       eventSpace;
 
     if ( !has( dataSpaces, name ) ) {
-      dataSpaces[name] = {};
-      eventSpaces[name] = {};
+      dataSpaces[ name ] = {};
+      eventSpaces[ name ] = {};
     }
 
-    dataSpace = dataSpaces[name];
-    eventSpace = eventSpaces[name];
+    dataSpace = dataSpaces[ name ];
+    eventSpace = eventSpaces[ name ];
 
     /*
       Retrieve the value of a property previously set in this module
@@ -107,7 +107,7 @@ privately(function() {
       if ( !has( dataSpace, name ) ){
         return null;
       }
-      return dataSpace[name];
+      return dataSpace[ name ];
     }
 
     /*
@@ -123,7 +123,7 @@ privately(function() {
       with get().
     */
     function set( name, value ) {
-      dataSpace[name] = value;
+      dataSpace[ name ] = value;
     }
 
     /*
@@ -141,7 +141,7 @@ privately(function() {
       if ( !has( eventSpace, name ) ) {
         return;
       }
-      listeners = copy( eventSpace[name] );
+      listeners = copy( eventSpace[ name ] );
       forEach( listeners, function( listener ) {
         return listener( value );
       });
@@ -170,12 +170,12 @@ privately(function() {
     function subscribe( name, listener ) {
       var listeners;
       if ( !has( eventSpace, name ) ) {
-        eventSpace[name] = [];
+        eventSpace[ name ] = [];
       }
-      listeners = eventSpace[name];
+      listeners = eventSpace[ name ];
       listeners.push( listener );
-      if ( has( dataSpace, name ) && !no( dataSpace[name] ) ) {
-        listener( dataSpace[name] );
+      if ( has( dataSpace, name ) && !no( dataSpace[ name ] ) ) {
+        listener( dataSpace[ name ] );
       }
       return function unsubscribe() {
         remove( listeners, listener );

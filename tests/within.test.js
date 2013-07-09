@@ -162,7 +162,7 @@ log( test(function() {
   unsubscribeB = subscribe1( "one", observerB );
   assert(
     valuesB.length === 1 &&
-    valuesB[0] === ONE,
+    valuesB[ 0 ] === ONE,
                             "callback is expected to be called immediately " +
                                               "when property is already set" );
 
@@ -174,7 +174,7 @@ log( test(function() {
   publish1( "one", null );
   assert(
     valuesB.length === 2 &&
-    valuesB[1] === null,
+    valuesB[ 1 ] === null,
              "null value is expected to be published to registered observer" );
 
   assert( get1( "one" ) === null,
@@ -202,9 +202,9 @@ log( test(function() {
   publish1( "one", ONE );
   assert(
     valuesB.length === 3 &&
-    valuesB[2] === ONE &&
+    valuesB[ 2 ] === ONE &&
     valuesC.length === 1 &&
-    valuesC[0] === ONE,
+    valuesC[ 0 ] === ONE,
                                  "same notification expected for observers " +
                                 "in different instances of the same module" );
   assert(
@@ -216,9 +216,9 @@ log( test(function() {
   publish1( "one", ONE );
   assert(
     valuesB.length === 4 &&
-    valuesB[3] === ONE &&
+    valuesB[ 3 ] === ONE &&
     valuesC.length === 2 &&
-    valuesC[1] === ONE,
+    valuesC[ 1 ] === ONE,
                               "observers are expected to be notified again " +
                                      "even when the same value is published" );
 
@@ -228,9 +228,9 @@ log( test(function() {
 
   assert(
     valuesB.length === 5 &&
-    valuesB[4] === undefined &&
+    valuesB[ 4 ] === undefined &&
     valuesC.length === 3 &&
-    valuesC[2] === undefined,
+    valuesC[ 2 ] === undefined,
          "undefined value is expected to be published when value is omitted");
 
   subscribe1too( "one", observerC );
@@ -244,8 +244,8 @@ log( test(function() {
 
   assert(
     valuesC.length === 2 &&
-    valuesC[0] === ONE &&
-    valuesC[1] === ONE,
+    valuesC[ 0 ] === ONE &&
+    valuesC[ 1 ] === ONE,
                    "observers registered multiple times for the same event " +
                         "are expected to be triggered multiple times as well");
 
