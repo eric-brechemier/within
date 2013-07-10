@@ -185,17 +185,17 @@ API
 
   This shorter pattern is intended for use in debugging:
 
-    console.log( within( "example.tld/game" ).get( "score" ) );
-    within( "example.tld/game" ).set( "score", 0 );
-    within( "example.tld/game" ).subscribe( "bonus", function( bonus ){
+    console.log( within( "example.org/game" ).get( "score" ) );
+    within( "example.org/game" ).set( "score", 0 );
+    within( "example.org/game" ).subscribe( "bonus", function( bonus ){
       console.log( bonus );
     });
-    within( "example.tld/game" ).publish( "bonus", 100 );
+    within( "example.org/game" ).publish( "bonus", 100 );
 
   The above form is more redundant but easier to type in the console,
   due to reduced indentation level compared with the equivalent form below:
 
-    within( "example.tld/game", function( get, set, publish, subscribe ){
+    within( "example.org/game", function( get, set, publish, subscribe ){
       console.log( get( "score" ) );
       set( "score", 0 );
       subscribe( "bonus", function( bonus ){
@@ -207,9 +207,9 @@ API
   The shorter form is also useful when interacting with a module from within
   another module:
 
-    within( "example.tld/test", function( get, set, publish, subscribe ){
+    within( "example.org/test", function( get, set, publish, subscribe ){
 
-      var game = within( "example.tld/game" );
+      var game = within( "example.org/game" );
 
       game.subscribe( "bonus", function( bonus ){
         var score = game.get( "score" );
@@ -224,11 +224,11 @@ API
   confusing than the longer form below which uses the same function names
   get, set, publish, subscribe for the methods of two different modules:
 
-    within( "example.tld/test", function( get, set, publish, subscribe ){
-      // get, set, publish, subscribe are methods of module "example.tld/test"
+    within( "example.org/test", function( get, set, publish, subscribe ){
+      // get, set, publish, subscribe are methods of module "example.org/test"
 
-      within( "example.tld/game", function( get, set, publish, subscribe ){
-        // get, set, publish, subscribe are methods of "example.tld/game"
+      within( "example.org/game", function( get, set, publish, subscribe ){
+        // get, set, publish, subscribe are methods of "example.org/game"
 
         subscribe( "bonus", function( bonus ){
           var score = get( "score" );
