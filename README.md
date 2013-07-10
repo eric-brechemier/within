@@ -8,7 +8,7 @@ where properties and events can be shared.
 API
 ---
 
-Function: within( name, callback )  
+Function: `within( name, callback )`  
 Create a semi-private space to share properties and events
 
 This function allows to create modules that span multiple source files
