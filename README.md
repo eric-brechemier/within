@@ -165,6 +165,14 @@ API
       // get( "started" ) === true;
     });
 
+  For convenience, '`this`' also refers to the module data object in listeners
+  for events of the module:
+
+    subscribe( "start", function() {
+      // 'this' refers to the module data
+      this.score = 0;
+    });
+
   As a shortcut, within() can also be called without callback, to retrieve
   an object with the four methods get, set, publish, and subscribe:
 
