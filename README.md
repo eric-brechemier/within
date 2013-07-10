@@ -33,7 +33,7 @@ API
   which roughly corresponds to a space where you would be able to publish
   contents on the Web (although you don't have to):
 
-    example.tld/hypothetic/path/to/module
+    "example.tld/hypothetic/path/to/module"
 
   The intent is to avoid clashes with modules defined by different people and
   organizations, or even yourself in the future.
