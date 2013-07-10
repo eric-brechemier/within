@@ -56,10 +56,10 @@ data and publish events within the confines of this shared symbolic space:
 
 The `get()` and `set()` functions simply get and set properties in the module
 data, without publishing any event. Since the data object can also be
-accessed as '`this`' in the callback function, properties can also be set
+accessed as `this` in the callback function, properties can also be set
 and retrieved directly.
 
-The advantage of `get()` over direct access through '`this`' is that it only
+The advantage of `get()` over direct access through `this` is that it only
 retrieves the value of *own* properties stored directly in the data object,
 and not the value of properties *inherited* from the Object prototype chain,
 which allows to use the data object as a hash, without tripping on
@@ -67,7 +67,7 @@ which allows to use the data object as a hash, without tripping on
 
 [OBJECT_PROTOTYPE]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
 
-A disadvantage of `get()` compared with direct access through '`this`' is
+A disadvantage of `get()` compared with direct access through `this` is
 that it does not provide any means to differentiate between an unset value
 and a value explicitly set to `null`. In both cases, `get()` returns `null`:
 
@@ -88,9 +88,9 @@ and allow a stronger comparison of value with the `===` operator instead
 of a weaker comparison using `==` operator which results in type coercion.
 
 There is no particular advantage of `set()` compared with directly setting
-a value through '`this`', except that the `set()` function remains accessible
+a value through `this`, except that the `set()` function remains accessible
 in all functions defined within the callback function provided as argument
-to `within()`, unlike '`this`' which varies as the calling context of each
+to `within()`, unlike `this` which varies as the calling context of each
 function changes:
 
     within( "example.org/module1", function( get, set, publish, subscribe ){
@@ -165,7 +165,7 @@ set and never published before:
       // get( "started" ) === true;
     });
 
-For convenience, '`this`' also refers to the module data object in listeners
+For convenience, `this` also refers to the module data object in listeners
 for events of the module:
 
     subscribe( "start", function() {
