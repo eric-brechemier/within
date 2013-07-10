@@ -49,17 +49,17 @@ of the module:
 Four functions are provided as arguments to the callback to interact with
 data and publish events within the confines of this shared symbolic space:
 
-* get( name ) - get the value of a property in module data
-* set( name, value ) - set the value of a property in module data
-* publish( name, value ) - set the value of a property and publish an event
-* subscribe( name, listener ) - subscribe to an event published in the module
+* `get( name )` - get the value of a property in module data
+* `set( name, value )` - set the value of a property in module data
+* `publish( name, value )` - set the value of a property and publish an event
+* `subscribe( name, listener )` - subscribe to an event published in the module
 
-The get() and set() functions simply get and set properties in the module
+The `get()` and `set()` functions simply get and set properties in the module
 data, without publishing any event. Since the data object can also be
 accessed as '`this`' in the callback function, properties can also be set
 and retrieved directly.
 
-The advantage of get() over direct access through '`this`' is that it only
+The advantage of `get()` over direct access through '`this`' is that it only
 retrieves the value of *own* properties stored directly in the data object,
 and not the value of properties *inherited* from the Object prototype chain,
 which allows to use the data object as a hash, without tripping on
@@ -67,9 +67,9 @@ which allows to use the data object as a hash, without tripping on
 
 [OBJECT_PROTOTYPE]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
 
-A disadvantage of get() compared with direct access through '`this`' is
+A disadvantage of `get()` compared with direct access through '`this`' is
 that it does not provide any means to differentiate between an unset value
-and a value explicitly set to null. In both cases, get() returns null:
+and a value explicitly set to `null`. In both cases, `get()` returns `null`:
 
     set( "property1", null );
     get( "property1" ) === null; // true
@@ -77,7 +77,7 @@ and a value explicitly set to null. In both cases, get() returns null:
     // property2 has never been set
     get( "property2" ) === null; // true
 
-get() only returns 'undefined' if the value 'undefined' is set explicitly:
+`get()` only returns `undefined` if the value `undefined` is set explicitly:
 
     set( "property3", undefined );
     get( "property3" ) === undefined; // true
@@ -87,10 +87,10 @@ deliberate design decision, to make the data object behave more like a hash
 and allow a stronger comparison of value with the `===` operator instead
 of a weaker comparison using `==` operator which results in type coercion.
 
-There is no particular advantage of set() compared with directly setting
-a value through '`this`', except that the set() function remains accessible
+There is no particular advantage of `set()` compared with directly setting
+a value through '`this`', except that the `set()` function remains accessible
 in all functions defined within the callback function provided as argument
-to within(), unlike '`this`' which varies as the calling context of each
+to `within()`, unlike '`this`' which varies as the calling context of each
 function changes:
 
     within( "example.org/module1", function( get, set, publish, subscribe ){
@@ -106,9 +106,9 @@ function changes:
       innerFunction();
     });
 
-The publish() function notifies registered listeners of the occurrence of
+The `publish()` function notifies registered listeners of the occurrence of
 an event in the module together with the current value of the associated
-property. A common use case is to call publish() twice in a row,
+property. A common use case is to call `publish()` twice in a row,
 with a verb in the active form and the same verb in passive form:
 
     publish( "start", {
@@ -116,8 +116,8 @@ with a verb in the active form and the same verb in passive form:
     });
     publish( "started", true );
 
-Listeners for "start" may process provided data in turn while listeners
-for "started" will get notified once the processing completes:
+Listeners for `"start"` may process provided data in turn while listeners
+for `"started"` will get notified once the processing completes:
 
     subscribe( "start", function( config ) {
       // configure some behavior using provided properties
@@ -133,8 +133,8 @@ The value of the event is also set to the property of the same name:
       // get( "start" ) === config; // true
     });
 
-When no value is provided in the call to publish(), it defaults to the
-boolean value true:
+When no value is provided in the call to `publish()`, it defaults to the
+boolean value `true`:
 
     publish( "started" );
 
@@ -144,8 +144,8 @@ boolean value true:
     });
 
 When a listener is registered for an event while the property of the same
-name has already been set, subscribe() fires the listener immediately
-without waiting for the next call to publish():
+name has already been set, `subscribe()` fires the listener immediately
+without waiting for the next call to `publish()`:
 
     publish( "started" );
 
@@ -173,8 +173,8 @@ for events of the module:
       this.score = 0;
     });
 
-As a shortcut, within() can also be called without callback, to retrieve
-an object with the four methods get, set, publish, and subscribe:
+As a shortcut, `within()` can also be called without callback, to retrieve
+an object with the four methods `get`, `set`, `publish`, and `subscribe`:
 
     {
       get: function( name ){ /* ... */ },
@@ -222,7 +222,7 @@ another module:
 
 The short form above is more readable due to reduced nesting, and less
 confusing than the longer form below which uses the same function names
-get, set, publish, subscribe for the methods of two different modules:
+`get`, `set`, `publish`, `subscribe` for the methods of two different modules:
 
     within( "example.org/test", function( get, set, publish, subscribe ){
       // get, set, publish, subscribe are methods of module "example.org/test"
