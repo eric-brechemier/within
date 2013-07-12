@@ -224,20 +224,31 @@ log( test(function() {
                                      "even when the same value is published" );
 
   publish1too( "one" );
-  assert( get1( "one" ) === undefined,
-              "omitted value in publish is expected to be set as undefined" );
+  assert( get1( "one" ) === true,
+      "omitted value in publish is expected to be set as boolean value true" );
 
   assert(
     valuesB.length === 5 &&
-    valuesB[ 4 ] === undefined &&
+    valuesB[ 4 ] === true &&
     valuesC.length === 4 &&
-    valuesC[ 3 ] === undefined,
-         "undefined value is expected to be published when value is omitted");
+    valuesC[ 3 ] === true,
+       "boolean value true is expected to be published when value is omitted");
+
+  publish1too( "one", undefined );
+  assert( get1( "one" ) === undefined,
+                      "undefined value is expected to be set when published" );
+
+  assert(
+    valuesB.length === 6 &&
+    valuesB[ 5 ] === undefined &&
+    valuesC.length === 5 &&
+    valuesC[ 4 ] === undefined,
+        "undefined value is expected to be published to registered listeners");
 
   subscribe1too( "one", observerC );
   assert(
-    valuesC.length === 5 &&
-    valuesC[ 4 ] === undefined,
+    valuesC.length === 6 &&
+    valuesC[ 5 ] === undefined,
                             "callback is expected to be called immediately " +
                                       "even when initial value is undefined" );
 

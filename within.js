@@ -137,10 +137,14 @@ privately(function() {
 
       Parameters:
         name - string, the name of an event and the associated property
-        value - any, the new value of the property, also provided to listeners
+        value - any, optional, the new value of the property, also provided
+                to listeners, defaults to boolean value true
     */
     function publish( name, value ) {
       var listeners;
+      if ( arguments.length < 2 ) {
+        value = true;
+      }
       set( name, value );
       if ( !has( eventSpace, name ) ) {
         return;
