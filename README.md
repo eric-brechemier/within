@@ -96,7 +96,7 @@ deliberate design decision, to make the data object behave more like a hash
 and allow a stronger comparison of value with the `===` operator instead
 of a weaker comparison using `==` operator which results in type coercion.
 
-There is no particular advantage of `set()` compared with directly setting
+There is no particular advantage for `set()` compared with directly setting
 a value through `this`, except that the `set()` function remains accessible
 in all functions defined within the callback function provided as argument
 to `within()`, unlike `this` which varies as the calling context of each
