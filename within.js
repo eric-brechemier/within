@@ -74,13 +74,11 @@ privately(function() {
 
     Parameters:
       name - string, name of the symbolic space:
-             a domain name and path that you control on the Web,
-             followed with the name of the module.
+             a domain name and path that you control on the Web.
              Example: "github.com/eric-brechemier/within/tests/module1"
       callback - function( get, set, publish, subscribe ), function called
-                 immediately, in the context ('this') of an object,
-                 always the same in each call of within with the same name,
-                 and with four functions as arguments to share properties and
+                 immediately, in the context ('this') of the module data object
+                 with four functions as arguments to share properties and
                  events within this module (described separately below).
 
     Returns:
