@@ -157,19 +157,14 @@ privately(function() {
       Parameters:
         name - string, the name of an event and the related property
         listener - function( value ), the callback triggered immediately
+                   if the property with given name has been set, and then each
+                   time the event with given name is published in this module
+                   until the subscription is cancelled.
 
       Returns:
-        function(), the function to call to remove current listener, which
-        will no longer receive notifications for given event.
-
-      Notes:
-        1) Callbacks are triggered immediately when the value of the property
-        is set, not null or undefined
-        2) Callbacks are triggered when any value is published, even the same
-        as current value, or null or undefined
-        3) In case the same listener is registered multiple times, duplicate
-        listeners for the same event are removed at the same time, while any
-        subscription of the same listener to other events remains active.
+        function(), the function to call to remove current callback function
+        from listeners and prevent it from receiving further notifications
+        for this event.
     */
     function subscribe( name, listener ) {
       var listeners;
@@ -178,7 +173,7 @@ privately(function() {
       }
       listeners = eventSpace[ name ];
       listeners.push( listener );
-      if ( has( dataSpace, name ) && !no( dataSpace[ name ] ) ) {
+      if ( has( dataSpace, name ) ) {
         listener( dataSpace[ name ] );
       }
       return function unsubscribe() {

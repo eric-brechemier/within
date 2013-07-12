@@ -186,9 +186,10 @@ log( test(function() {
 
   unsubscribeC = subscribe1too( "one", observerC );
   assert(
-    valuesC.length === 0,
-                        "callback is not expected to be called immediately " +
-                                                "when initial value is null" );
+    valuesC.length === 1 &&
+    valuesC[ 0 ] === null,
+                            "callback is expected to be called immediately " +
+                                           "even when initial value is null" );
 
   assert(
     valuesB.length === 2,
@@ -203,8 +204,8 @@ log( test(function() {
   assert(
     valuesB.length === 3 &&
     valuesB[ 2 ] === ONE &&
-    valuesC.length === 1 &&
-    valuesC[ 0 ] === ONE,
+    valuesC.length === 2 &&
+    valuesC[ 1 ] === ONE,
                                  "same notification expected for observers " +
                                 "in different instances of the same module" );
   assert(
@@ -217,8 +218,8 @@ log( test(function() {
   assert(
     valuesB.length === 4 &&
     valuesB[ 3 ] === ONE &&
-    valuesC.length === 2 &&
-    valuesC[ 1 ] === ONE,
+    valuesC.length === 3 &&
+    valuesC[ 2 ] === ONE,
                               "observers are expected to be notified again " +
                                      "even when the same value is published" );
 
@@ -229,15 +230,16 @@ log( test(function() {
   assert(
     valuesB.length === 5 &&
     valuesB[ 4 ] === undefined &&
-    valuesC.length === 3 &&
-    valuesC[ 2 ] === undefined,
+    valuesC.length === 4 &&
+    valuesC[ 3 ] === undefined,
          "undefined value is expected to be published when value is omitted");
 
   subscribe1too( "one", observerC );
   assert(
-    valuesC.length === 3,
-                        "callback is not expected to be called immediately " +
-                                          "when initial value is undefined" );
+    valuesC.length === 5 &&
+    valuesC[ 4 ] === undefined,
+                            "callback is expected to be called immediately " +
+                                      "even when initial value is undefined" );
 
   valuesC = [];
   publish1too( "one", ONE );
