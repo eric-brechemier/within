@@ -130,16 +130,19 @@ log( test(function() {
     contextC,
     contextD,
     contextE,
+    contextF,
     valuesA = [],
     valuesB = [],
     valuesC = [],
     valuesD = [],
     valuesE = [],
+    valuesF = [],
     unsubscribeA,
     unsubscribeB,
     unsubscribeC,
     unsubscribeD,
-    unsubscribeE;
+    unsubscribeE,
+    unsubscribeF;
 
   function observerA( value ) {
     contextA = this;
@@ -164,6 +167,11 @@ log( test(function() {
   function observerE( value ) {
     contextE = this;
     valuesE.push( value );
+  }
+
+  function observerF( value ) {
+    contextF = this;
+    valuesF.push( value );
   }
 
   unsubscribeA = subscribe1( "missing", observerA );
@@ -298,19 +306,63 @@ log( test(function() {
     valuesE.length === 0,
      "no notification expected for observer of same event in another module" );
 
-  publish2( "one" );
+  var shortcut2 = within( MODULE2 );
+
+  assert(
+    typeof shortcut2 === "object" &&
+    typeof shortcut2.get === "function" &&
+    typeof shortcut2.set === "function" &&
+    typeof shortcut2.publish === "function" &&
+    typeof shortcut2.subscribe === "function",
+            "a shortcut object with 4 methods get, set, publish, subscribe " +
+             "is expected when calling within() without a callback function" );
+
+  module2.ten = 10;
+  assert(
+    shortcut2.get( "ten" ) === 10,
+         "shortcut get is expected to return the value of a module property" );
+
+  shortcut2.set( "ten", 11 );
+  assert(
+    module2.ten === 11,
+            "shortcut set is expected to set the value of a module property" );
+
+  unsubscribeF = shortcut2.subscribe( "one", observerF );
+
+  assert(
+    typeof unsubscribeF === "function",
+                       "shortcut subscribe is expected to return a function" );
+
+  publish2( "one", "I" );
 
   assert(
     valuesE.length === 1 &&
-    contextE === module2,
-                           "a listener in another module is expected to be " +
-              "called in the context of the data object of the other module" );
+    valuesE[ 0 ] === "I",
+    contextE === module2 &&
+    valuesF.length === 1 &&
+    valuesF[ 0 ] === "I",
+    contextF === module2,
+        "listeners of second module are expected to be triggered by publish " +
+                  "whether registered by subscribe or by shortcut subscribe" );
+
+  shortcut2.publish( "one", "i" );
+
+  assert(
+    valuesE.length === 2 &&
+    valuesE[ 1 ] === "i",
+    contextE === module2 &&
+    valuesF.length === 2 &&
+    valuesF[ 1 ] === "i",
+    contextF === module2,
+    "shortcut publish is expected to trigger listeners of the module event " +
+                 "whether registered by subscribe or by shortcut subscribe" );
 
   valuesA = [];
   valuesB = [];
   valuesC = [];
   valuesD = [];
   valuesE = [];
+  valuesF = [];
 
   publish1( "four", FOUR );
   assert( get1( "four" ) === FOUR,
@@ -321,7 +373,8 @@ log( test(function() {
     valuesB.length === 0 &&
     valuesC.length === 0 &&
     valuesD.length === 0 &&
-    valuesE.length === 0,
+    valuesE.length === 0 &&
+    valuesF.length === 0,
                                               "no other listener must fire " +
                 "when an event is published without any registered listener" );
 
@@ -330,19 +383,22 @@ log( test(function() {
   unsubscribeC();
   unsubscribeD();
   unsubscribeE();
+  unsubscribeF();
 
   publish1( "missing", "The end" );
   publish1( "one", TWO );
   publish1too( "one", THREE );
   publish1( "two", ONE );
   publish2( "one", TWO );
+  shortcut2.publish( "one", THREE );
 
   assert(
     valuesA.length === 0 &&
     valuesB.length === 0 &&
     valuesC.length === 0 &&
     valuesD.length === 0 &&
-    valuesE.length === 0,
+    valuesE.length === 0 &&
+    valuesF.length === 0,
                                               "no other listener must fire " +
                 "after corresponding unsubscribe() function has been called" );
 

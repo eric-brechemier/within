@@ -76,13 +76,15 @@ privately(function() {
       name - string, name of the symbolic space:
              a domain name and path that you control on the Web.
              Example: "github.com/eric-brechemier/within/tests/module1"
-      callback - function( get, set, publish, subscribe ), function called
-                 immediately, in the context ('this') of the module data object
-                 with four functions as arguments to share properties and
-                 events within this module (described separately below).
+      callback - function( get, set, publish, subscribe ), optional, function
+                 called immediately in the context ('this') of the module data
+                 object with four functions as arguments to share properties
+                 and events within this module (described separately below).
 
     Returns:
-      any, the value returned by the callback function
+      any, the value returned by the callback function,
+      or an object with the four methods get, set, publish, subscribe
+      to interact with the module data when the callback function is omitted.
   */
   function within( name, callback ) {
     var
@@ -185,6 +187,15 @@ privately(function() {
       }
       return function unsubscribe() {
         remove( listeners, listener );
+      };
+    }
+
+    if ( arguments.length < 2 ) {
+      return {
+        get: get,
+        set: set,
+        publish: publish,
+        subscribe: subscribe
       };
     }
 
