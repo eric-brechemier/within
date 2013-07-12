@@ -14,13 +14,13 @@ function privately( func ) {
 
 privately(function() {
   var
+    undef, // do not trust global undefined, which can be set to a value
     dataSpaces = {},
     eventSpaces = {},
     has;
 
   // from sub/nada/no.js (CC0)
   function no( value ) {
-    var undef; // do not trust global undefined, which can be set to a value
     return value === null || value === undef;
   }
 
@@ -98,18 +98,18 @@ privately(function() {
     eventSpace = eventSpaces[ name ];
 
     /*
-      Retrieve the value of a property previously set in this module
+      Retrieve the value of a property
 
       Parameter:
         name - string, the name of a property of current module
 
       Returns:
-        any, the value previously set to the property with given name,
-        or null initially before any value has been set
+        any, the value of the property with given name
+        in the own properties of the module data
     */
     function get( name ) {
       if ( !has( dataSpace, name ) ){
-        return null;
+        return undef;
       }
       return dataSpace[ name ];
     }

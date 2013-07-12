@@ -84,8 +84,8 @@ log( test(function() {
     FOUR = [ 1, 2, 3, 4 ];
 
   assert(
-    get1( "one" ) === null,
-                 "get must return null initially before a property is set" );
+    get1( "one" ) === undefined,
+    "get is expected to return undefined initially before a property is set" );
 
   set1( "one", ONE );
   set1( "two", TWO );
@@ -110,13 +110,13 @@ log( test(function() {
                    "properties must be shared with instances of the module" );
 
   assert(
-    get2( "one" ) === null &&
-    get2( "two" ) === null &&
-    get2( "three" ) === null,
+    get2( "one" ) === undefined &&
+    get2( "two" ) === undefined &&
+    get2( "three" ) === undefined,
                          "properties must not be shared with other modules" );
 
   assert(
-    get1( "hasOwnProperty" ) === null,
+    get1( "hasOwnProperty" ) === undefined,
                             "inherited values must not be returned by get" );
 
   set1( "hasOwnProperty", HAS_OWN_PROPERTY );

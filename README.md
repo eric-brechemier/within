@@ -76,26 +76,6 @@ which allows to use the data object as a hash, without tripping on
 
 [OBJECT_PROTOTYPE]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
 
-A disadvantage of `get()` compared with direct access through `this` is
-that it does not provide any means to differentiate between an unset value
-and a value explicitly set to `null`. In both cases, `get()` returns `null`:
-
-    set( "property1", null );
-    get( "property1" ) === null; // true
-
-    // property2 has never been set
-    get( "property2" ) === null; // true
-
-`get()` only returns `undefined` if the value `undefined` is set explicitly:
-
-    set( "property3", undefined );
-    get( "property3" ) === undefined; // true
-
-But this feature can also be seen as an advantage, and results from a
-deliberate design decision, to make the data object behave more like a hash
-and allow a stronger comparison of value with the `===` operator instead
-of a weaker comparison using `==` operator which results in type coercion.
-
 There is no particular advantage for `set()` compared with directly setting
 a value through `this`, except that the `set()` function remains accessible
 in all functions defined within the callback function provided as argument
