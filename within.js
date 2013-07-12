@@ -103,11 +103,11 @@ privately(function() {
       Retrieve the value of a property
 
       Parameter:
-        name - string, the name of a property of current module
+        name - string, the name of a property in module data object
 
       Returns:
         any, the value of the property with given name
-        in the own properties of the module data
+        in the own properties of the module data object
     */
     function get( name ) {
       if ( !has( dataSpace, name ) ){
@@ -120,7 +120,7 @@ privately(function() {
       Set the value of a property of the module
 
       Parameters:
-        name - string, the name of a property in current module
+        name - string, the name of a property in module data object
         value - any, the new value of the property
     */
     function set( name, value ) {
