@@ -107,7 +107,7 @@ log( test(function() {
     get1too( "one" ) === ONE &&
     get1too( "two" ) === TWO &&
     get1too( "three" ) === THREE,
-                   "properties must be shared with instances of the module" );
+               "properties must be shared in different parts of the module" );
 
   assert(
     get2( "one" ) === undefined &&
@@ -200,7 +200,7 @@ log( test(function() {
   assert(
     get1( "one" ) === null &&
     get1too( "one" ) === null,
-  "null value expected to be set in different instances of the same module" );
+       "null value expected to be set in different parts of the same module" );
 
   unsubscribeC = subscribe1too( "one", observerC );
   assert(
@@ -230,7 +230,7 @@ log( test(function() {
     valuesC.length === 2 &&
     valuesC[ 1 ] === ONE,
                                  "same notification expected for observers " +
-                                "in different instances of the same module" );
+                                    "in different parts of the same module" );
 
   assert(
     contextB === contextC,
@@ -240,7 +240,7 @@ log( test(function() {
   assert(
     get1( "one" ) === ONE &&
     get1too( "one" ) === ONE,
-  "same value expected to be set in different instances of the same module " +
+       "same value expected to be set in different parts of the same module " +
                                                "after an event is published" );
 
   publish1( "one", ONE );
