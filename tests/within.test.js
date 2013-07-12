@@ -173,13 +173,11 @@ log( test(function() {
   assert(
     valuesB.length === 1 &&
     valuesB[ 0 ] === ONE &&
-    typeof contextB === 'object' &&
+    contextB === module1 &&
     contextB.one === ONE,
                             "callback is expected to be called immediately " +
                                  "in the context of the module data object " +
                                               "when property is already set" );
-
-  var previousContextB = contextB;
 
   set1( "one", THREE );
   assert(
@@ -190,10 +188,10 @@ log( test(function() {
   assert(
     valuesB.length === 2 &&
     valuesB[ 1 ] === null &&
-    contextB === previousContextB &&
+    contextB === module1 &&
     contextB.one === null,
            "null value is expected to be published to registered observer " +
-                            "in the context of the same module data object" );
+                                 "in the context of the module data object" );
 
   assert( get1( "one" ) === null,
                            "null value is expected to be set when published" );
@@ -205,14 +203,11 @@ log( test(function() {
   unsubscribeC = subscribe1too( "one", observerC );
   assert(
     valuesC.length === 1 &&
-    valuesC[ 0 ] === null,
+    valuesC[ 0 ] === null &&
+    contextC === module1,
                             "callback is expected to be called immediately " +
+                                     "in the context of module data object " +
                                            "even when initial value is null" );
-
-  assert(
-    contextC === contextB,
-                 "all listeners are expected to be called in the context of " +
-                                                "the same module data object");
 
   assert(
     valuesB.length === 2,
@@ -233,7 +228,8 @@ log( test(function() {
                                     "in different parts of the same module" );
 
   assert(
-    contextB === contextC,
+    contextB === module1 &&
+    contextC === module1,
                     "the same module data object is expected for observers " +
                                      "in different parts of the same module" );
 
@@ -270,14 +266,17 @@ log( test(function() {
   assert(
     valuesB.length === 6 &&
     valuesB[ 5 ] === undefined &&
+    contextB === module1 &&
     valuesC.length === 5 &&
-    valuesC[ 4 ] === undefined,
+    valuesC[ 4 ] === undefined &&
+    contextC === module1,
         "undefined value is expected to be published to registered listeners");
 
   subscribe1too( "one", observerC );
   assert(
     valuesC.length === 6 &&
-    valuesC[ 5 ] === undefined,
+    valuesC[ 5 ] === undefined &&
+    contextC === module1,
                             "callback is expected to be called immediately " +
                                       "even when initial value is undefined" );
 
@@ -303,10 +302,9 @@ log( test(function() {
 
   assert(
     valuesE.length === 1 &&
-    typeof contextE === "object" &&
-    contextE !== contextA,
+    contextE === module2,
                            "a listener in another module is expected to be " +
-                   "called in the context of a different module data object" );
+              "called in the context of the data object of the other module" );
 
   valuesA = [];
   valuesB = [];
