@@ -122,11 +122,6 @@ privately(function() {
       Parameters:
         name - string, the name of a property in current module
         value - any, the new value of the property
-
-      Note:
-      Calling this function is equivalent to setting the property directly
-      on the context object, and the function is only provided for symmetry
-      with get().
     */
     function set( name, value ) {
       dataSpace[ name ] = value;
