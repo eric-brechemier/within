@@ -128,8 +128,8 @@ privately(function() {
     }
 
     /*
-      Set the value of a property and fire listeners registered for this event,
-      in this module, and in this module only, until a listener returns true or
+      Set the value of a property and fire listeners registered for this event
+      in this module and in this module only, until a listener returns true or
       all listeners have been called.
 
       Parameters:
