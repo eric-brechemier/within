@@ -38,6 +38,15 @@ contents on the Web (although you don't have to):
 The intent is to avoid clashes with modules defined by different people and
 organizations, or even yourself in the future.
 
+Note that, although it may be less convenient, it is also possible to build
+the module name dynamically, for example:
+
+    "example.tld/hypothetic/path/to/module/" + counter()
+
+where `counter()` is a function that returns 1 initially and one more than
+previous result on each subsequent run. This allows to create separate
+spaces to publish events for different instances of a module.
+
 The callback function runs immediately, within the context of an object
 that holds data for the module; the same object is provided in all parts
 of the module:
