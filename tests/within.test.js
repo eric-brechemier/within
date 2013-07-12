@@ -125,6 +125,11 @@ log( test(function() {
        "own values of inherited properties must be set and returned by get" );
 
   var
+    contextA,
+    contextB,
+    contextC,
+    contextD,
+    contextE,
     valuesA = [],
     valuesB = [],
     valuesC = [],
@@ -137,22 +142,27 @@ log( test(function() {
     unsubscribeE;
 
   function observerA( value ) {
+    contextA = this;
     valuesA.push( value );
   }
 
   function observerB( value ) {
+    contextB = this;
     valuesB.push( value );
   }
 
   function observerC( value ) {
+    contextC = this;
     valuesC.push( value );
   }
 
   function observerD( value ) {
+    contextD = this;
     valuesD.push( value );
   }
 
   function observerE( value ) {
+    contextE = this;
     valuesE.push( value );
   }
 
@@ -162,9 +172,14 @@ log( test(function() {
   unsubscribeB = subscribe1( "one", observerB );
   assert(
     valuesB.length === 1 &&
-    valuesB[ 0 ] === ONE,
+    valuesB[ 0 ] === ONE &&
+    typeof contextB === 'object' &&
+    contextB.one === ONE,
                             "callback is expected to be called immediately " +
+                                 "in the context of the module data object " +
                                               "when property is already set" );
+
+  var previousContextB = contextB;
 
   set1( "one", THREE );
   assert(
@@ -174,8 +189,11 @@ log( test(function() {
   publish1( "one", null );
   assert(
     valuesB.length === 2 &&
-    valuesB[ 1 ] === null,
-             "null value is expected to be published to registered observer" );
+    valuesB[ 1 ] === null &&
+    contextB === previousContextB &&
+    contextB.one === null,
+           "null value is expected to be published to registered observer " +
+                            "in the context of the same module data object" );
 
   assert( get1( "one" ) === null,
                            "null value is expected to be set when published" );
@@ -190,6 +208,11 @@ log( test(function() {
     valuesC[ 0 ] === null,
                             "callback is expected to be called immediately " +
                                            "even when initial value is null" );
+
+  assert(
+    contextC === contextB,
+                 "all listeners are expected to be called in the context of " +
+                                                "the same module data object");
 
   assert(
     valuesB.length === 2,
@@ -208,6 +231,12 @@ log( test(function() {
     valuesC[ 1 ] === ONE,
                                  "same notification expected for observers " +
                                 "in different instances of the same module" );
+
+  assert(
+    contextB === contextC,
+                    "the same module data object is expected for observers " +
+                                     "in different parts of the same module" );
+
   assert(
     get1( "one" ) === ONE &&
     get1too( "one" ) === ONE,
@@ -269,6 +298,15 @@ log( test(function() {
   assert(
     valuesE.length === 0,
      "no notification expected for observer of same event in another module" );
+
+  publish2( "one" );
+
+  assert(
+    valuesE.length === 1 &&
+    typeof contextE === "object" &&
+    contextE !== contextA,
+                           "a listener in another module is expected to be " +
+                   "called in the context of a different module data object" );
 
   valuesA = [];
   valuesB = [];

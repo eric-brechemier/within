@@ -17,7 +17,8 @@ privately(function() {
     undef, // do not trust global undefined, which can be set to a value
     dataSpaces = {},
     eventSpaces = {},
-    has;
+    has,
+    call;
 
   // from sub/nada/no.js (CC0)
   function no( value ) {
@@ -66,6 +67,7 @@ privately(function() {
   }
 
   has = alias( Object.prototype.hasOwnProperty );
+  call = alias( Function.prototype.call );
 
   /*
     Create a semi-private space to share properties and events
@@ -151,7 +153,7 @@ privately(function() {
       }
       listeners = copy( eventSpace[ name ] );
       forEach( listeners, function( listener ) {
-        return listener( value );
+        return call( listener, dataSpace, value );
       });
     }
 
@@ -160,10 +162,13 @@ privately(function() {
 
       Parameters:
         name - string, the name of an event and the related property
-        listener - function( value ), the callback triggered immediately
-                   if the property with given name has been set, and then each
-                   time the event with given name is published in this module
-                   until the subscription is cancelled.
+        listener - function( value ), the callback triggered in the context of
+                   the module data object:
+                   - immediately, if the property with given name has been set,
+                     with the value of the property as parameter
+                   - then each time the event with given name is published
+                     until the subscription is cancelled, with the value of
+                     the property when the event is published as parameter.
 
       Returns:
         function(), the function to call to remove current callback function
@@ -178,7 +183,7 @@ privately(function() {
       listeners = eventSpace[ name ];
       listeners.push( listener );
       if ( has( dataSpace, name ) ) {
-        listener( dataSpace[ name ] );
+        call( listener, dataSpace, dataSpace[ name ] );
       }
       return function unsubscribe() {
         remove( listeners, listener );
