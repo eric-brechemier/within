@@ -91,13 +91,17 @@ privately(function() {
       dataSpace,
       eventSpace;
 
-    if ( !has( dataSpaces, name ) ) {
-      dataSpaces[ name ] = {};
-      eventSpaces[ name ] = {};
+    if ( no( name ) ) {
+      dataSpace = {};
+      eventSpace = {};
+    } else {
+      if ( !has( dataSpaces, name ) ) {
+        dataSpaces[ name ] = {};
+        eventSpaces[ name ] = {};
+      }
+      dataSpace = dataSpaces[ name ];
+      eventSpace = eventSpaces[ name ];
     }
-
-    dataSpace = dataSpaces[ name ];
-    eventSpace = eventSpaces[ name ];
 
     /*
       Retrieve the value of a property
