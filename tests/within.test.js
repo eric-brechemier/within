@@ -7,6 +7,7 @@ log( test(function() {
     module1,
     module1too,
     module2,
+    shortcut2,
     get1,
     get1too,
     get2,
@@ -306,7 +307,7 @@ log( test(function() {
     valuesE.length === 0,
      "no notification expected for observer of same event in another module" );
 
-  var shortcut2 = within( MODULE2 );
+  shortcut2 = within( MODULE2 );
 
   assert(
     typeof shortcut2 === "object" &&
