@@ -8,6 +8,8 @@ log( test(function() {
     module1too,
     module2,
     shortcut2,
+    anonymous0,
+    anonymous00,
     get1,
     get1too,
     get2,
@@ -77,6 +79,7 @@ log( test(function() {
 
   var
     HAS_OWN_PROPERTY = "my own property?",
+    ZERO = [],
     ONE = 1,
     TWO = "TWO",
     THREE = {
@@ -132,18 +135,24 @@ log( test(function() {
     contextD,
     contextE,
     contextF,
+    contextG,
+    contextH,
     valuesA = [],
     valuesB = [],
     valuesC = [],
     valuesD = [],
     valuesE = [],
     valuesF = [],
+    valuesG = [],
+    valuesH = [],
     unsubscribeA,
     unsubscribeB,
     unsubscribeC,
     unsubscribeD,
     unsubscribeE,
-    unsubscribeF;
+    unsubscribeF,
+    unsubscribeG,
+    unsubscribeH;
 
   function observerA( value ) {
     contextA = this;
@@ -173,6 +182,16 @@ log( test(function() {
   function observerF( value ) {
     contextF = this;
     valuesF.push( value );
+  }
+
+  function observerG( value ) {
+    contextG = this;
+    valuesG.push( value );
+  }
+
+  function observerH( value ) {
+    contextH = this;
+    valuesH.push( value );
   }
 
   unsubscribeA = subscribe1( "missing", observerA );
@@ -358,12 +377,105 @@ log( test(function() {
     "shortcut publish is expected to trigger listeners of the module event " +
                  "whether registered by subscribe or by shortcut subscribe" );
 
+  anonymous0 = within();
+  anonymous00 = within();
+
+  assert(
+    typeof anonymous0 === "object" &&
+    typeof anonymous0.get === "function" &&
+    typeof anonymous0.set === "function" &&
+    typeof anonymous0.publish === "function" &&
+    typeof anonymous0.subscribe === "function" &&
+    typeof anonymous00 === "object" &&
+    typeof anonymous00.get === "function" &&
+    typeof anonymous00.set === "function" &&
+    typeof anonymous00.publish === "function" &&
+    typeof anonymous00.subscribe === "function",
+            "a shortcut object with 4 methods get, set, publish, subscribe " +
+                   "is expected when calling within() without any parameter" );
+
+  assert(
+    anonymous0.get( "zero" ) === undefined &&
+    anonymous0.get( "one" ) === undefined &&
+    anonymous0.get( "two" ) === undefined &&
+    anonymous0.get( "three" ) === undefined &&
+    anonymous0.get( "four" ) === undefined &&
+    anonymous0.get( "ten" ) === undefined &&
+    anonymous00.get( "zero" ) === undefined &&
+    anonymous00.get( "one" ) === undefined &&
+    anonymous00.get( "two" ) === undefined &&
+    anonymous00.get( "three" ) === undefined &&
+    anonymous00.get( "four" ) === undefined &&
+    anonymous00.get( "ten" ) === undefined,
+                                        "get() method of anonymous modules " +
+                 " is expected to return undefined before a property is set" );
+
+  anonymous0.set( "zero", ZERO );
+
+  assert(
+    anonymous0.get( "zero" ) === ZERO &&
+    anonymous00.get( "zero" ) === undefined,
+       "a value set in an anonymous module must be set only in this module " +
+                              "and not shared with other anonymous modules" );
+
+  unsubscribeG = anonymous0.subscribe( "zero", observerG );
+  unsubscribeH = anonymous00.subscribe( "zero", observerH );
+
+  assert(
+    typeof unsubscribeG === "function" &&
+    typeof unsubscribeH === "function",
+             "subscribe method of anonymous modules must return a function" );
+
+  assert(
+    typeof contextG === "object" &&
+    valuesG.length === 1 &&
+    valuesG[ 0 ] === ZERO,
+   "listener is expected to be triggered immediately in anonymous subscribe " +
+                            "when the corresponding property is already set" );
+
+  assert(
+    contextH === undefined &&
+    valuesH.length === 0,
+              "a listener for the same property in another anonymous module " +
+                                  "is not expected to get triggered however" );
+
+  anonymous00.publish( "zero", 0 );
+  assert(
+    typeof contextH === "object" &&
+    valuesH.length === 1 &&
+    valuesH[ 0 ] === 0,
+                  "listener is expected to fire when an event is published " +
+                                                   "in an anonymous module" );
+
+  assert(
+    valuesG.length === 1,
+                "a listener for the same event in another anonymous module " +
+                                          "is not expected to fire however" );
+
+  assert(
+    contextG !== contextA &&
+    contextG !== contextB &&
+    contextG !== contextC &&
+    contextG !== contextD &&
+    contextG !== contextE &&
+    contextG !== contextF &&
+    contextH !== contextA &&
+    contextH !== contextB &&
+    contextH !== contextC &&
+    contextH !== contextD &&
+    contextH !== contextE &&
+    contextH !== contextF,
+             "anonymous modules are expected to have unique context objects " +
+   "different from the context of named modules and other anonymous modules" );
+
   valuesA = [];
   valuesB = [];
   valuesC = [];
   valuesD = [];
   valuesE = [];
   valuesF = [];
+  valuesG = [];
+  valuesH = [];
 
   publish1( "four", FOUR );
   assert( get1( "four" ) === FOUR,
@@ -375,7 +487,9 @@ log( test(function() {
     valuesC.length === 0 &&
     valuesD.length === 0 &&
     valuesE.length === 0 &&
-    valuesF.length === 0,
+    valuesF.length === 0 &&
+    valuesG.length === 0 &&
+    valuesH.length === 0,
                                               "no other listener must fire " +
                 "when an event is published without any registered listener" );
 
@@ -385,6 +499,8 @@ log( test(function() {
   unsubscribeD();
   unsubscribeE();
   unsubscribeF();
+  unsubscribeG();
+  unsubscribeH();
 
   publish1( "missing", "The end" );
   publish1( "one", TWO );
@@ -392,6 +508,8 @@ log( test(function() {
   publish1( "two", ONE );
   publish2( "one", TWO );
   shortcut2.publish( "one", THREE );
+  anonymous0.publish( "two", FOUR );
+  anonymous00.publish( "four", TWO );
 
   assert(
     valuesA.length === 0 &&
@@ -399,7 +517,9 @@ log( test(function() {
     valuesC.length === 0 &&
     valuesD.length === 0 &&
     valuesE.length === 0 &&
-    valuesF.length === 0,
+    valuesF.length === 0 &&
+    valuesG.length === 0 &&
+    valuesH.length === 0,
                                               "no other listener must fire " +
                 "after corresponding unsubscribe() function has been called" );
 
