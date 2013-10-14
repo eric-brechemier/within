@@ -14,9 +14,16 @@ Create a semi-private space to share properties and events
 Both name and callback can be omitted, resulting in three different forms
 described in the sections below.
 
-  * `within( name, callback )`: any - run code in the space with given name
-  * `within( name )`: object - access the space with given name
-  * `within()`: object - access an anonymous space
+  * [`within( name, callback )`: any - run code in the space with given name]
+    [WITHIN2]
+  * [`within( name )`: object - access the space with given name]
+    [WITHIN1]
+  * [`within()`: object - access an anonymous space]
+    [WITHIN0]
+
+[WITHIN2]: #within-name-callback--any
+[WITHIN1]: #within-name--object
+[WITHIN0]: #within-object
 
 ### `within( name, callback )`: any ###
 
