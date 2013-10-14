@@ -11,7 +11,19 @@ API
 Function: `within( name, callback )`  
 Create a semi-private space to share properties and events
 
-This function allows to create modules that span multiple source files
+Both name and callback can be omitted, resulting in three different forms
+described in the sections below.
+
+  * `within( name, callback )`: any - run code in the space with given name
+  * `within( name )`: object - access the space with given name
+  * `within()`: object - access an anonymous space
+
+### `within( name, callback )`: any ###
+
+Run the given callback in the space with given name and return the result
+of the callback (left as undefined if missing).
+
+This form allows to create modules that span multiple source files
 before concatenation.
 
     // module1-part1.js
@@ -37,15 +49,6 @@ contents on the Web (although you don't have to):
 
 The intent is to avoid clashes with modules defined by different people and
 organizations, or even yourself in the future.
-
-Note that, although it may be less convenient, it is also possible to build
-the module name dynamically, for example:
-
-    "example.tld/hypothetic/path/to/module/" + counter()
-
-where `counter()` is a function that returns 1 initially and one more than
-previous result on each subsequent run. This allows to create separate
-spaces to publish events for different instances of a module.
 
 The callback function runs immediately, within the context of an object
 that holds data for the module; the same object is provided in all parts
@@ -162,8 +165,10 @@ for events of the module:
       this.score = 0;
     });
 
-As a shortcut, `within()` can also be called without callback, to retrieve
-an object with the four methods `get`, `set`, `publish`, and `subscribe`:
+### `within( name )`: object ###
+
+Access the space with given name. Returns an object with four methods to
+interact with the space, `get`, `set`, `publish`, and `subscribe`:
 
     {
       get: function( name ){ /* ... */ },
@@ -227,6 +232,53 @@ confusing than the longer form below which uses the same function names
         publish( "bonus", 100 );
       });
 
+    });
+
+### `within()`: object ###
+
+Access an anonymous space. Returns an object with the four methods to interact
+with the space, `get`, `set`, `publish`, and `subscribe`.
+
+Each call results in the creation of a different anonymous space,
+for single use. No reference to this space is kept in the factory.
+
+This form allows to create separate spaces for multiple instances of an
+application, or more generally multiple instances of objects in a collection:
+
+    function Item() {
+      var space = within(); // create a new space for single use
+
+      function publish( name, value ){
+        // publish an event only for this item
+        space.publish( name, value );
+      }
+
+      // each item can process its own events
+      // without additional filtering required
+    }
+
+An alternative would be to assign a different id to each item in the
+collection, and use it to customize either the event name or the data:
+
+    // customize the event name using the id
+    publish( "example.org/collection/" + id, data );
+
+    // the subscription must build the event name in the same way
+    subscribe( "example.org/collection/" + id, function( data ) {
+      // process the event
+    });
+
+    // customize the data using the id
+    data.id = id;
+    publish( "example.org/collection", data );
+
+    subscribe( "example.org/collection", function( data ) {
+      // an extra filter is required in the event subscriber
+      if ( data.id !== id ) {
+        return;
+      }
+
+      // process the event
     });
 
 LANGUAGE
