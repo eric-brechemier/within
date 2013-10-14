@@ -288,6 +288,11 @@ collection, and use it to customize either the event name or the data:
       // process the event
     });
 
+Since there is no method provided to reset the factory at this point,
+references to named modules are preserved for the lifetime of the application.
+If you want to manage this cache separately, you can use anonymous modules
+instead, which maintains the factory in a blank state.
+
 LANGUAGE
 ---------
 
