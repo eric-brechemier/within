@@ -3,9 +3,17 @@
 // where properties and events can be shared.
 //
 // Usage:
-// within( "your.domain/path", function( get, set, publish, subscribe ) {
-//   // semi-private space
-// });
+//
+//   // Run code within a module
+//   within( "your.domain/path", function( get, set, publish, subscribe ) {
+//     // semi-private space
+//   });
+//
+//   // Access a shared space by name
+//   within( "your.domain/path" ).set( "property", "value" );
+//
+//   // Create an anonymous space for single use
+//   var space = within();
 
 // from sub/nada/privately.js (CC0)
 function privately( func ) {
@@ -70,10 +78,11 @@ privately(function() {
   call = alias( Function.prototype.call );
 
   /*
+    Function: within( [name, [callback]] ): any
     Create a semi-private space to share properties and events
 
     Parameters:
-      name - string, name of the symbolic space:
+      name - string, optional, name of the symbolic space:
              a domain name and path that you control on the Web.
              Example: "github.com/eric-brechemier/within/tests/module1"
       callback - function( get, set, publish, subscribe ), optional, function
@@ -85,6 +94,7 @@ privately(function() {
       any, the value returned by the callback function,
       or an object with the four methods get, set, publish, subscribe
       to interact with the module data when the callback function is omitted.
+      When no name is provided, an anonymous module is created for single use.
   */
   function within( name, callback ) {
     var
@@ -104,6 +114,7 @@ privately(function() {
     }
 
     /*
+      Function: get( name ): any
       Retrieve the value of a property
 
       Parameter:
@@ -121,6 +132,7 @@ privately(function() {
     }
 
     /*
+      Function: set( name, value )
       Set the value of a property of the module
 
       Parameters:
@@ -132,6 +144,7 @@ privately(function() {
     }
 
     /*
+      Function: publish( name, value )
       Set the value of a property and fire listeners registered for this event
       in this module and in this module only, until a listener returns true or
       all listeners have been called.
@@ -157,6 +170,7 @@ privately(function() {
     }
 
     /*
+      Function: subscribe( name, listener ): function
       Register a callback function for the event of given name
 
       Parameters:
