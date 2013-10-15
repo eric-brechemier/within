@@ -453,6 +453,12 @@ log( test(function() {
                                           "is not expected to fire however" );
 
   assert(
+    contextG.zero === ZERO &&
+    contextH.zero === 0,
+                             "properties are expected to be set in context " +
+                                   "provided as this to anonymous listener" );
+
+  assert(
     contextG !== contextA &&
     contextG !== contextB &&
     contextG !== contextC &&
