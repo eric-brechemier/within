@@ -10,44 +10,44 @@ log( test(function() {
     shortcut2,
     anonymous0,
     anonymous00,
-    get1,
-    get1too,
-    get2,
-    set1,
-    set1too,
-    set2,
     publish1,
     publish1too,
     publish2,
     subscribe1,
     subscribe1too,
-    subscribe2;
+    subscribe2,
+    get1,
+    get1too,
+    get2,
+    set1,
+    set1too,
+    set2;
 
   assert( typeof within === "function",
                                 "within is expected to be a global function");
 
-  within( MODULE1, function( get, set, publish, subscribe ) {
+  within( MODULE1, function( publish, subscribe, get, set ) {
     module1 = this;
-    get1 = get;
-    set1 = set;
     publish1 = publish;
     subscribe1 = subscribe;
+    get1 = get;
+    set1 = set;
   });
 
-  within( MODULE1, function( get, set, publish, subscribe ) {
+  within( MODULE1, function( publish, subscribe, get, set ) {
     module1too = this;
-    get1too = get;
-    set1too = set;
     publish1too = publish;
     subscribe1too = subscribe;
+    get1too = get;
+    set1too = set;
   });
 
-  within( MODULE2, function( get, set, publish, subscribe ) {
+  within( MODULE2, function( publish, subscribe, get, set ) {
     module2 = this;
-    get2 = get;
-    set2 = set;
     publish2 = publish;
     subscribe2 = subscribe;
+    get2 = get;
+    set2 = set;
   });
 
   assert(
@@ -57,18 +57,18 @@ log( test(function() {
                         "an object is expected as context for the callback" );
 
   assert(
-    typeof get1 === "function" &&
-    typeof set1 === "function" &&
     typeof publish1 === "function" &&
     typeof subscribe1 === "function" &&
-    typeof get1too === "function" &&
-    typeof set1too === "function" &&
+    typeof get1 === "function" &&
+    typeof set1 === "function" &&
     typeof publish1too === "function" &&
     typeof subscribe1too === "function" &&
-    typeof get2 === "function" &&
-    typeof set2 === "function" &&
+    typeof get1too === "function" &&
+    typeof set1too === "function" &&
     typeof publish2 === "function" &&
-    typeof subscribe2 === "function",
+    typeof subscribe2 === "function" &&
+    typeof get2 === "function" &&
+    typeof set2 === "function",
           "all four arguments of the callback are expected to be functions" );
 
   assert( module1 === module1too,
@@ -382,16 +382,16 @@ log( test(function() {
 
   assert(
     typeof anonymous0 === "object" &&
-    typeof anonymous0.get === "function" &&
-    typeof anonymous0.set === "function" &&
     typeof anonymous0.publish === "function" &&
     typeof anonymous0.subscribe === "function" &&
+    typeof anonymous0.get === "function" &&
+    typeof anonymous0.set === "function" &&
     typeof anonymous00 === "object" &&
-    typeof anonymous00.get === "function" &&
-    typeof anonymous00.set === "function" &&
     typeof anonymous00.publish === "function" &&
-    typeof anonymous00.subscribe === "function",
-            "a shortcut object with 4 methods get, set, publish, subscribe " +
+    typeof anonymous00.subscribe === "function" &&
+    typeof anonymous00.get === "function" &&
+    typeof anonymous00.set === "function",
+            "a shortcut object with 4 methods publish, subscribe, get, set " +
                    "is expected when calling within() without any parameter" );
 
   assert(

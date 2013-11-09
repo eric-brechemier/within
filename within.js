@@ -215,7 +215,7 @@ privately(function() {
       };
     }
 
-    return callback.apply( dataSpace, [ get, set, publish, subscribe ] );
+    return callback.apply( dataSpace, [ publish, subscribe, get, set ] );
   }
 
   this.within = within;
