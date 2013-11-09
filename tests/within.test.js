@@ -2,8 +2,8 @@ log( test(function() {
 
   var
     PATH = "github.com/eric-brechemier/within/tests/",
-    MODULE1 = PATH + "module1",
-    MODULE2 = PATH + "module2",
+    SPACE1 = PATH + "space1",
+    SPACE2 = PATH + "space2",
     space1,
     space1too,
     space2,
@@ -26,7 +26,7 @@ log( test(function() {
   assert( typeof within === "function",
                                 "within is expected to be a global function");
 
-  within( MODULE1, function( publish, subscribe, get, set ) {
+  within( SPACE1, function( publish, subscribe, get, set ) {
     space1 = this;
     publish1 = publish;
     subscribe1 = subscribe;
@@ -34,7 +34,7 @@ log( test(function() {
     set1 = set;
   });
 
-  within( MODULE1, function( publish, subscribe, get, set ) {
+  within( SPACE1, function( publish, subscribe, get, set ) {
     space1too = this;
     publish1too = publish;
     subscribe1too = subscribe;
@@ -42,7 +42,7 @@ log( test(function() {
     set1too = set;
   });
 
-  within( MODULE2, function( publish, subscribe, get, set ) {
+  within( SPACE2, function( publish, subscribe, get, set ) {
     space2 = this;
     publish2 = publish;
     subscribe2 = subscribe;
@@ -326,7 +326,7 @@ log( test(function() {
     valuesE.length === 0,
      "no notification expected for observer of same event in another space" );
 
-  shortcut2 = within( MODULE2 );
+  shortcut2 = within( SPACE2 );
 
   assert(
     typeof shortcut2 === "object" &&
