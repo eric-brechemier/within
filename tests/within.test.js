@@ -7,7 +7,7 @@ log( test(function() {
     space1,
     space1too,
     space2,
-    shortcut2,
+    spaceFunction2,
     anonymous0,
     anonymous00,
     publish1,
@@ -326,28 +326,28 @@ log( test(function() {
     valuesE.length === 0,
      "no notification expected for observer of same event in another space" );
 
-  shortcut2 = within( SPACE2 );
+  spaceFunction2 = within( SPACE2 );
 
   assert(
-    typeof shortcut2 === "object" &&
-    typeof shortcut2.get === "function" &&
-    typeof shortcut2.set === "function" &&
-    typeof shortcut2.publish === "function" &&
-    typeof shortcut2.subscribe === "function",
-            "a shortcut object with 4 methods get, set, publish, subscribe " +
+    typeof spaceFunction2 === "object" &&
+    typeof spaceFunction2.get === "function" &&
+    typeof spaceFunction2.set === "function" &&
+    typeof spaceFunction2.publish === "function" &&
+    typeof spaceFunction2.subscribe === "function",
+             "a space function with 4 methods publish, subscribe, get, set " +
              "is expected when calling within() without a callback function" );
 
   space2.ten = 10;
   assert(
-    shortcut2.get( "ten" ) === 10,
+    spaceFunction2.get( "ten" ) === 10,
          "shortcut get is expected to return the value of a space property" );
 
-  shortcut2.set( "ten", 11 );
+  spaceFunction2.set( "ten", 11 );
   assert(
     space2.ten === 11,
             "shortcut set is expected to set the value of a space property" );
 
-  unsubscribeF = shortcut2.subscribe( "one", observerF );
+  unsubscribeF = spaceFunction2.subscribe( "one", observerF );
 
   assert(
     typeof unsubscribeF === "function",
@@ -365,7 +365,7 @@ log( test(function() {
         "listeners of second space are expected to be triggered by publish " +
                   "whether registered by subscribe or by shortcut subscribe" );
 
-  shortcut2.publish( "one", "i" );
+  spaceFunction2.publish( "one", "i" );
 
   assert(
     valuesE.length === 2 &&
@@ -391,7 +391,7 @@ log( test(function() {
     typeof anonymous00.subscribe === "function" &&
     typeof anonymous00.get === "function" &&
     typeof anonymous00.set === "function",
-            "a shortcut object with 4 methods publish, subscribe, get, set " +
+             "a space function with 4 methods publish, subscribe, get, set " +
                    "is expected when calling within() without any parameter" );
 
   assert(
@@ -513,7 +513,7 @@ log( test(function() {
   publish1too( "one", THREE );
   publish1( "two", ONE );
   publish2( "one", TWO );
-  shortcut2.publish( "one", THREE );
+  spaceFunction2.publish( "one", THREE );
   anonymous0.publish( "two", FOUR );
   anonymous00.publish( "four", TWO );
 
