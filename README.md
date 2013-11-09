@@ -192,17 +192,25 @@ which varies as the calling context of each function changes:
 
 Access the space with given name.
 
-The space function can be called to run code in the space:
+The space function can be called to run code in the space.
+It returns the result of the callback, if any:
 
     var space = within( "example.org/module1" );
-    space(function( publish, subscribe, get, set ) {
-      // run code in the space "example.org/module1"
+
+    // run code in the space "example.org/module1"
+    var value = space(function( publish, subscribe, get, set ) {
+      var result;
+      ...
+      return result;
     });
 
 which is equivalent to:
 
-    space( "example.org/module1", function( publish, subscribe, get, set ) {
-      // run code in the space "example.org/module1"
+    // run code in the space "example.org/module1"
+    var value = within( "example.org/module1", function( pub, sub, get, set ) {
+      var result;
+      ...
+      return result;
     });
 
 The space has four methods which are the same functions provided as
@@ -275,8 +283,11 @@ to interact with the space directly.
 
     var space = within();
 
-    space(function( publish, subscribe, get, set ) {
-      // run code in the anonymous space
+    // run code in the anonymous space
+    var value = space(function( publish, subscribe, get, set ) {
+      var result;
+      ...
+      return result;
     });
 
     // interact with the space directly
