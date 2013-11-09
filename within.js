@@ -208,10 +208,10 @@ privately(function() {
 
     if ( arguments.length < 2 ) {
       return {
-        get: get,
-        set: set,
         publish: publish,
-        subscribe: subscribe
+        subscribe: subscribe,
+        get: get,
+        set: set
       };
     }
 
