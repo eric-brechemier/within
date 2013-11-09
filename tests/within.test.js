@@ -329,7 +329,7 @@ log( test(function() {
   spaceFunction2 = within( SPACE2 );
 
   assert(
-    typeof spaceFunction2 === "object" &&
+    typeof spaceFunction2 === "function" &&
     typeof spaceFunction2.get === "function" &&
     typeof spaceFunction2.set === "function" &&
     typeof spaceFunction2.publish === "function" &&
@@ -381,12 +381,12 @@ log( test(function() {
   anonymous00 = within();
 
   assert(
-    typeof anonymous0 === "object" &&
+    typeof anonymous0 === "function" &&
     typeof anonymous0.publish === "function" &&
     typeof anonymous0.subscribe === "function" &&
     typeof anonymous0.get === "function" &&
     typeof anonymous0.set === "function" &&
-    typeof anonymous00 === "object" &&
+    typeof anonymous00 === "function" &&
     typeof anonymous00.publish === "function" &&
     typeof anonymous00.subscribe === "function" &&
     typeof anonymous00.get === "function" &&

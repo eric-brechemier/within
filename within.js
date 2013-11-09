@@ -206,13 +206,32 @@ privately(function() {
       };
     }
 
+    /*
+      Function: space( callback ): any
+      Run code in the given space
+
+      Parameter:
+        callback - function( publish, subscribe, get, set ), optional, function
+                   called immediately in the context ('this') of the space data
+                   object with four functions (described above) as arguments to
+                   share events and properties within the space.
+
+      Returns:
+        any, the value returned by the callback function,
+        or undefined
+    */
+    function space( callback ) {
+      // TODO: apply callback to [ publish, subscribe, get, set ],
+      // return result if any
+    }
+
+    space.publish = publish;
+    space.subscribe = subscribe;
+    space.get = get;
+    space.set = set;
+
     if ( arguments.length < 2 ) {
-      return {
-        publish: publish,
-        subscribe: subscribe,
-        get: get,
-        set: set
-      };
+      return space;
     }
 
     return callback.apply( dataSpace, [ publish, subscribe, get, set ] );
