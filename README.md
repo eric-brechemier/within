@@ -3,29 +3,29 @@ within
 https://github.com/eric-brechemier/within
 
 within is a factory of semi-private spaces  
-where properties and events can be shared.
+where events and properties can be shared.
 
 API
 ---
 
 Function: `within( name, callback )`  
-Create a semi-private space to share properties and events
+Create a semi-private space to share events and properties
 
 Both name and callback can be omitted, resulting in three different forms
 described in the sections below.
 
   * [`within( name, callback )`: any - run code in the space with given name]
     [WITHIN2]
-  * [`within( name )`: object - access the space with given name]
+  * [`within( name )`: function - access the space with given name]
     [WITHIN1]
-  * [`within()`: object - access an anonymous space]
+  * [`within()`: function - access an anonymous space]
     [WITHIN0]
 
-[WITHIN2]: #within-name-callback--any
-[WITHIN1]: #within-name--object
-[WITHIN0]: #within-object
+[WITHIN2]: #within2
+[WITHIN1]: #within1
+[WITHIN0]: #within0
 
-### `within( name, callback )`: any ###
+### <a name="within2">`within( name, callback )`: any</a> ###
 
 Run the given callback in the space with given name and return the result
 of the callback (left as undefined if missing).
@@ -34,17 +34,17 @@ This form allows to create modules that span multiple source files
 before concatenation.
 
     // module1-part1.js
-    within( "example.org/module1", function( get, set, publish, subscribe ) {
+    within( "example.org/module1", function( publish, subscribe, get, set ) {
       // definition of module 1, part 1
     });
 
     // module1-part2.js
-    within( "example.org/module1", function( get, set, publish, subscribe ) {
+    within( "example.org/module1", function( publish, subscribe, get, set ) {
       // definition of module 1, part 2
     });
 
     // module1-part3.js
-    within( "example.org/module1", function( get, set, publish, subscribe ) {
+    within( "example.org/module1", function( publish, subscribe, get, set ) {
       // definition of module 1, part 3
     });
 
@@ -61,49 +61,18 @@ The callback function runs immediately, within the context of an object
 that holds data for the module; the same object is provided in all parts
 of the module:
 
-    within( "example.org/module1", function( get, set, publish, subscribe ) {
+    within( "example.org/module1", function( publish, subscribe, get, set ) {
       // 'this' refers to semi-private module data
     });
 
 Four functions are provided as arguments to the callback to interact with
-data and publish events within the confines of this shared symbolic space:
+the space, publish and subscribe to events and share data within the confines
+of this shared symbolic space:
 
-* `get( name )` - get the value of a property in module data
-* `set( name, value )` - set the value of a property in module data
 * `publish( name, value )` - set the value of a property and publish an event
-* `subscribe( name, listener )` - subscribe to an event published in the module
-
-The `get()` and `set()` functions simply get and set properties in the module
-data, without publishing any event. Since the data object can also be
-accessed as `this` in the callback function, properties can also be set
-and retrieved directly.
-
-The advantage of `get()` over direct access through `this` is that it only
-retrieves the value of *own* properties stored directly in the data object,
-and not the value of properties *inherited* from the Object prototype chain,
-which allows to use the data object as a hash, without tripping on
-[special names such as 'constructor' or 'hasOwnProperty'][OBJECT_PROTOTYPE].
-
-[OBJECT_PROTOTYPE]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
-
-There is no particular advantage for `set()` compared with directly setting
-a value through `this`, except that the `set()` function remains accessible
-in all functions defined within the callback function provided as argument
-to `within()`, unlike `this` which varies as the calling context of each
-function changes:
-
-    within( "example.org/module1", function( get, set, publish, subscribe ){
-
-      // 'this' refers to module data
-      // get() and set() allow to get/set properties in module data
-
-      function innerFunction() {
-        // 'this' no longer refers to module data
-        // get() and set() still allow to get/set properties in module data
-      }
-
-      innerFunction();
-    });
+* `subscribe( name, listener )` - subscribe to an event published in the space
+* `get( name )` - get the value of a property in space data
+* `set( name, value )` - set the value of a property in space data
 
 The `publish()` function notifies registered listeners of the occurrence of
 an event in the module together with the current value of the associated
@@ -153,8 +122,8 @@ without waiting for the next call to `publish()`:
       // get( "started" ) === true;
     });
 
-As a side effect, this is also the case when the property has only been
-set and never published before:
+Note that it is also the case when the property has only been set
+and never published before:
 
     // no call to publish( "started" ) before
     set( "started", true );
@@ -164,7 +133,7 @@ set and never published before:
       // get( "started" ) === true;
     });
 
-For convenience, `this` also refers to the module data object in listeners
+For convenience, `this` also refers to the space data object in listeners
 for events of the module:
 
     subscribe( "start", function() {
@@ -172,19 +141,74 @@ for events of the module:
       this.score = 0;
     });
 
-### `within( name )`: object ###
+The `get()` and `set()` functions simply get and set properties in the space
+data, without publishing any event. Since the data object can also be
+accessed as `this` in the callback function, properties can also be set
+and retrieved directly:
 
-Access the space with given name. Returns an object with four methods to
-interact with the space, `get`, `set`, `publish`, and `subscribe`:
+    within( "example.org/module1", function( publish, subscribe, get, set ) {
+      // 'this' refers to semi-private space data
+      this.property = 'value';
 
-    {
-      get: function( name ){ /* ... */ },
-      set: function( name, value ){ /* ... */ },
-      publish: function( name, value ){ /* ... */ },
-      subscribe: function( name, listener ){ /* ... */ }
-    }
+      // equivalent to:
+      set('property', 'value');
+    });
 
-This shorter pattern is intended for use in debugging:
+The advantage of `get()` over direct access through `this` is that it only
+retrieves the value of *own* properties stored directly in the data object,
+and not the value of properties *inherited* from the Object prototype chain,
+which allows to use the data object as a hash, without tripping on
+[special names such as 'constructor' or 'hasOwnProperty'][OBJECT_PROTOTYPE]:
+
+    within( "example.org/module1", function( publish, subscribe, get, set ) {
+      // 'constructor' is inherited from Object prototype
+      typeof this.constructor === 'function'; // true
+
+      // inherited properties are ignored by get()
+      typeof get('constructor') === 'function'; // false
+    });
+
+[OBJECT_PROTOTYPE]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
+
+The advantage of `set()` compared with directly setting a value through `this`
+is that the `set()` function remains accessible in all functions defined
+within the callback function provided as argument to `within()`, unlike `this`
+which varies as the calling context of each function changes:
+
+    within( "example.org/module1", function( publish, subscribe, get, set ){
+
+      // 'this' refers to space data
+      // get() and set() allow to get/set properties in space data
+
+      function innerFunction() {
+        // 'this' no longer refers to space data
+        // get() and set() still allow to get/set properties in space data
+      }
+
+      innerFunction();
+    });
+
+### <a name="within1">`within( name )`: function</a> ###
+
+Access the space with given name.
+
+The space function can be called to run code in the space:
+
+    var space = within( "example.org/module1" );
+    space(function( publish, subscribe, get, set ) {
+      // run code in the space "example.org/module1"
+    });
+
+which is equivalent to:
+
+    space( "example.org/module1", function( publish, subscribe, get, set ) {
+      // run code in the space "example.org/module1"
+    });
+
+The space has four methods which are the same functions provided as
+parameters to the callback: `publish`, `subscribe`, `get`, `set`.
+
+This is a shortcut intended for use in debugging:
 
     console.log( within( "example.org/game" ).get( "score" ) );
     within( "example.org/game" ).set( "score", 0 );
@@ -196,7 +220,7 @@ This shorter pattern is intended for use in debugging:
 The above form is more redundant but easier to type in the console,
 due to reduced indentation level compared with the equivalent form below:
 
-    within( "example.org/game", function( get, set, publish, subscribe ){
+    within( "example.org/game", function( publish, subscribe, get, set ){
       console.log( get( "score" ) );
       set( "score", 0 );
       subscribe( "bonus", function( bonus ){
@@ -205,10 +229,10 @@ due to reduced indentation level compared with the equivalent form below:
       publish( "bonus", 100 );
     });
 
-The shorter form is also useful when interacting with a module from within
-another module:
+The shorter form is also useful when interacting with a space from within
+another space:
 
-    within( "example.org/test", function( get, set, publish, subscribe ){
+    within( "example.org/test", function( publish, subscribe, get, set ){
 
       var game = within( "example.org/game" );
 
@@ -223,13 +247,13 @@ another module:
 
 The short form above is more readable due to reduced nesting, and less
 confusing than the longer form below which uses the same function names
-`get`, `set`, `publish`, `subscribe` for the methods of two different modules:
+`publish`, `subscribe`, `get`, `set` for the methods of two different spaces:
 
-    within( "example.org/test", function( get, set, publish, subscribe ){
-      // get, set, publish, subscribe are methods of module "example.org/test"
+    within( "example.org/test", function( publish, subscribe, get, set ){
+      // publish, subscribe, get, set are methods of space "example.org/test"
 
-      within( "example.org/game", function( get, set, publish, subscribe ){
-        // get, set, publish, subscribe are methods of "example.org/game"
+      within( "example.org/game", function( publish, subscribe, get, set ){
+        // publish, subscribe, get, set are methods of "example.org/game"
 
         subscribe( "bonus", function( bonus ){
           var score = get( "score" );
@@ -241,16 +265,44 @@ confusing than the longer form below which uses the same function names
 
     });
 
-### `within()`: object ###
+### <a name="within0">`within()`: function</a>  ###
 
-Access an anonymous space. Returns an object with the four methods to interact
-with the space, `get`, `set`, `publish`, and `subscribe`.
+Access an anonymous space.
 
-Each call results in the creation of a different anonymous space,
-for single use. No reference to this space is kept in the factory.
+The anonymous space function can be called to run code within,
+and has the four methods `publish`, `subscribe`, `get` and `set`
+to interact with the space directly.
 
-This form allows to create separate spaces for multiple instances of an
-application, or more generally multiple instances of objects in a collection:
+    var space = within();
+
+    space(function( publish, subscribe, get, set ) {
+      // run code in the anonymous space
+    });
+
+    // interact with the space directly
+    space.set('property', 'value');
+    var value = space.get('property');
+    space.publish('property', value);
+    space.subscribe('property', function(value){ ... });
+
+Each call to within() without any argument results in the creation of a
+different anonymous space, for single use:
+
+    // 3 separate anonymous spaces,
+    // with separate events and properties
+    var space1 = within(); // a first anonymous space
+    var space2 = within(); // a second anonymous space
+    var space3 = within(); // a third anonymous space
+
+No reference is kept in the factory for any anonymous space.
+
+References to named spaces on the other hand are preserved for the lifetime
+of the application, since there is no method provided to reset the factory at
+this point. If you want to manage this cache separately, you can use anonymous
+spaces instead, which maintains the factory in a blank state.
+
+An anonymous space can be created for each instance of an application,
+or more generally each instance in a collection:
 
     function Item() {
       var space = within(); // create a new space for single use
@@ -287,11 +339,6 @@ collection, and use it to customize either the event name or the data:
 
       // process the event
     });
-
-Since there is no method provided to reset the factory at this point,
-references to named modules are preserved for the lifetime of the application.
-If you want to manage this cache separately, you can use anonymous modules
-instead, which maintains the factory in a blank state.
 
 LANGUAGE
 ---------
