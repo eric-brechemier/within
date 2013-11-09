@@ -5,7 +5,7 @@
 // Usage:
 //
 //   // Run code within a module
-//   within( "your.domain/path", function( get, set, publish, subscribe ) {
+//   within( "your.domain/path", function( publish, subscribe, get, set ) {
 //     // semi-private space
 //   });
 //
@@ -85,16 +85,19 @@ privately(function() {
       name - string, optional, name of the symbolic space:
              a domain name and path that you control on the Web.
              Example: "github.com/eric-brechemier/within/tests/module1"
-      callback - function( get, set, publish, subscribe ), optional, function
-                 called immediately in the context ('this') of the module data
-                 object with four functions as arguments to share properties
-                 and events within this module (described separately below).
+      callback - function( publish, subscribe, get, set ), optional, function
+                 called immediately in the context ('this') of the space data
+                 object with four functions (described separately below) as
+                 arguments to share events and properties within the space.
 
     Returns:
       any, the value returned by the callback function,
-      or an object with the four methods get, set, publish, subscribe
-      to interact with the module data when the callback function is omitted.
-      When no name is provided, an anonymous module is created for single use.
+      or a space function with the four methods publish, subscribe, get, set,
+      to interact with the space data when the callback function is omitted;
+      the space function can then be called at any point with the same kind
+      of callback function described above to run code within the space.
+      When no name is provided, an anonymous module is created for single use,
+      for which no reference is kept in the internal space factory.
   */
   function within( name, callback ) {
     var
