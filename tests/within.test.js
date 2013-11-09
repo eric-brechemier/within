@@ -4,9 +4,9 @@ log( test(function() {
     PATH = "github.com/eric-brechemier/within/tests/",
     MODULE1 = PATH + "module1",
     MODULE2 = PATH + "module2",
-    module1,
-    module1too,
-    module2,
+    space1,
+    space1too,
+    space2,
     shortcut2,
     anonymous0,
     anonymous00,
@@ -27,7 +27,7 @@ log( test(function() {
                                 "within is expected to be a global function");
 
   within( MODULE1, function( publish, subscribe, get, set ) {
-    module1 = this;
+    space1 = this;
     publish1 = publish;
     subscribe1 = subscribe;
     get1 = get;
@@ -35,7 +35,7 @@ log( test(function() {
   });
 
   within( MODULE1, function( publish, subscribe, get, set ) {
-    module1too = this;
+    space1too = this;
     publish1too = publish;
     subscribe1too = subscribe;
     get1too = get;
@@ -43,7 +43,7 @@ log( test(function() {
   });
 
   within( MODULE2, function( publish, subscribe, get, set ) {
-    module2 = this;
+    space2 = this;
     publish2 = publish;
     subscribe2 = subscribe;
     get2 = get;
@@ -51,9 +51,9 @@ log( test(function() {
   });
 
   assert(
-    typeof module1 === "object" &&
-    typeof module1too === "object" &&
-    typeof module2 === "object",
+    typeof space1 === "object" &&
+    typeof space1too === "object" &&
+    typeof space2 === "object",
                         "an object is expected as context for the callback" );
 
   assert(
@@ -71,10 +71,10 @@ log( test(function() {
     typeof set2 === "function",
           "all four arguments of the callback are expected to be functions" );
 
-  assert( module1 === module1too,
+  assert( space1 === space1too,
                     "the same context object is expected for the same name" );
 
-  assert( module2 !== module1,
+  assert( space2 !== space1,
                "a different context object is expected for different names" );
 
   var
@@ -102,22 +102,22 @@ log( test(function() {
                          "values set to properties must be returned by get" );
 
   assert(
-    module1.one === ONE &&
-    module1.two === TWO &&
-    module1.three === THREE,
+    space1.one === ONE &&
+    space1.two === TWO &&
+    space1.three === THREE,
                    "values set to properties must be set to context object" );
 
   assert(
     get1too( "one" ) === ONE &&
     get1too( "two" ) === TWO &&
     get1too( "three" ) === THREE,
-               "properties must be shared in different parts of the module" );
+               "properties must be shared in different parts of the space" );
 
   assert(
     get2( "one" ) === undefined &&
     get2( "two" ) === undefined &&
     get2( "three" ) === undefined,
-                         "properties must not be shared with other modules" );
+                         "properties must not be shared with other spaces" );
 
   assert(
     get1( "hasOwnProperty" ) === undefined,
@@ -201,10 +201,10 @@ log( test(function() {
   assert(
     valuesB.length === 1 &&
     valuesB[ 0 ] === ONE &&
-    contextB === module1 &&
+    contextB === space1 &&
     contextB.one === ONE,
                             "callback is expected to be called immediately " +
-                                 "in the context of the module data object " +
+                                 "in the context of the space data object " +
                                               "when property is already set" );
 
   set1( "one", THREE );
@@ -216,25 +216,25 @@ log( test(function() {
   assert(
     valuesB.length === 2 &&
     valuesB[ 1 ] === null &&
-    contextB === module1 &&
+    contextB === space1 &&
     contextB.one === null,
            "null value is expected to be published to registered observer " +
-                                 "in the context of the module data object" );
+                                 "in the context of the space data object" );
 
   assert( get1( "one" ) === null,
                            "null value is expected to be set when published" );
   assert(
     get1( "one" ) === null &&
     get1too( "one" ) === null,
-       "null value expected to be set in different parts of the same module" );
+       "null value expected to be set in different parts of the same space" );
 
   unsubscribeC = subscribe1too( "one", observerC );
   assert(
     valuesC.length === 1 &&
     valuesC[ 0 ] === null &&
-    contextC === module1,
+    contextC === space1,
                             "callback is expected to be called immediately " +
-                                     "in the context of module data object " +
+                                     "in the context of space data object " +
                                            "even when initial value is null" );
 
   assert(
@@ -253,18 +253,18 @@ log( test(function() {
     valuesC.length === 2 &&
     valuesC[ 1 ] === ONE,
                                  "same notification expected for observers " +
-                                    "in different parts of the same module" );
+                                    "in different parts of the same space" );
 
   assert(
-    contextB === module1 &&
-    contextC === module1,
-                    "the same module data object is expected for observers " +
-                                     "in different parts of the same module" );
+    contextB === space1 &&
+    contextC === space1,
+                    "the same space data object is expected for observers " +
+                                     "in different parts of the same space" );
 
   assert(
     get1( "one" ) === ONE &&
     get1too( "one" ) === ONE,
-       "same value expected to be set in different parts of the same module " +
+       "same value expected to be set in different parts of the same space " +
                                                "after an event is published" );
 
   publish1( "one", ONE );
@@ -294,17 +294,17 @@ log( test(function() {
   assert(
     valuesB.length === 6 &&
     valuesB[ 5 ] === undefined &&
-    contextB === module1 &&
+    contextB === space1 &&
     valuesC.length === 5 &&
     valuesC[ 4 ] === undefined &&
-    contextC === module1,
+    contextC === space1,
         "undefined value is expected to be published to registered listeners");
 
   subscribe1too( "one", observerC );
   assert(
     valuesC.length === 6 &&
     valuesC[ 5 ] === undefined &&
-    contextC === module1,
+    contextC === space1,
                             "callback is expected to be called immediately " +
                                       "even when initial value is undefined" );
 
@@ -320,11 +320,11 @@ log( test(function() {
 
   assert(
     valuesD.length === 0,
-     "no notification expected for observer of another event in same module" );
+     "no notification expected for observer of another event in same space" );
 
   assert(
     valuesE.length === 0,
-     "no notification expected for observer of same event in another module" );
+     "no notification expected for observer of same event in another space" );
 
   shortcut2 = within( MODULE2 );
 
@@ -337,15 +337,15 @@ log( test(function() {
             "a shortcut object with 4 methods get, set, publish, subscribe " +
              "is expected when calling within() without a callback function" );
 
-  module2.ten = 10;
+  space2.ten = 10;
   assert(
     shortcut2.get( "ten" ) === 10,
-         "shortcut get is expected to return the value of a module property" );
+         "shortcut get is expected to return the value of a space property" );
 
   shortcut2.set( "ten", 11 );
   assert(
-    module2.ten === 11,
-            "shortcut set is expected to set the value of a module property" );
+    space2.ten === 11,
+            "shortcut set is expected to set the value of a space property" );
 
   unsubscribeF = shortcut2.subscribe( "one", observerF );
 
@@ -358,11 +358,11 @@ log( test(function() {
   assert(
     valuesE.length === 1 &&
     valuesE[ 0 ] === "I",
-    contextE === module2 &&
+    contextE === space2 &&
     valuesF.length === 1 &&
     valuesF[ 0 ] === "I",
-    contextF === module2,
-        "listeners of second module are expected to be triggered by publish " +
+    contextF === space2,
+        "listeners of second space are expected to be triggered by publish " +
                   "whether registered by subscribe or by shortcut subscribe" );
 
   shortcut2.publish( "one", "i" );
@@ -370,11 +370,11 @@ log( test(function() {
   assert(
     valuesE.length === 2 &&
     valuesE[ 1 ] === "i",
-    contextE === module2 &&
+    contextE === space2 &&
     valuesF.length === 2 &&
     valuesF[ 1 ] === "i",
-    contextF === module2,
-    "shortcut publish is expected to trigger listeners of the module event " +
+    contextF === space2,
+    "shortcut publish is expected to trigger listeners of the space event " +
                  "whether registered by subscribe or by shortcut subscribe" );
 
   anonymous0 = within();
@@ -407,7 +407,7 @@ log( test(function() {
     anonymous00.get( "three" ) === undefined &&
     anonymous00.get( "four" ) === undefined &&
     anonymous00.get( "ten" ) === undefined,
-                                        "get() method of anonymous modules " +
+                                        "get() method of anonymous spaces " +
                  " is expected to return undefined before a property is set" );
 
   anonymous0.set( "zero", ZERO );
@@ -415,8 +415,8 @@ log( test(function() {
   assert(
     anonymous0.get( "zero" ) === ZERO &&
     anonymous00.get( "zero" ) === undefined,
-       "a value set in an anonymous module must be set only in this module " +
-                              "and not shared with other anonymous modules" );
+       "a value set in an anonymous space must be set only in this space " +
+                              "and not shared with other anonymous spaces" );
 
   unsubscribeG = anonymous0.subscribe( "zero", observerG );
   unsubscribeH = anonymous00.subscribe( "zero", observerH );
@@ -424,7 +424,7 @@ log( test(function() {
   assert(
     typeof unsubscribeG === "function" &&
     typeof unsubscribeH === "function",
-             "subscribe method of anonymous modules must return a function" );
+             "subscribe method of anonymous spaces must return a function" );
 
   assert(
     typeof contextG === "object" &&
@@ -436,7 +436,7 @@ log( test(function() {
   assert(
     contextH === undefined &&
     valuesH.length === 0,
-              "a listener for the same property in another anonymous module " +
+              "a listener for the same property in another anonymous space " +
                                   "is not expected to get triggered however" );
 
   anonymous00.publish( "zero", 0 );
@@ -445,11 +445,11 @@ log( test(function() {
     valuesH.length === 1 &&
     valuesH[ 0 ] === 0,
                   "listener is expected to fire when an event is published " +
-                                                   "in an anonymous module" );
+                                                   "in an anonymous space" );
 
   assert(
     valuesG.length === 1,
-                "a listener for the same event in another anonymous module " +
+                "a listener for the same event in another anonymous space " +
                                           "is not expected to fire however" );
 
   assert(
@@ -471,8 +471,8 @@ log( test(function() {
     contextH !== contextD &&
     contextH !== contextE &&
     contextH !== contextF,
-             "anonymous modules are expected to have unique context objects " +
-   "different from the context of named modules and other anonymous modules" );
+             "anonymous spaces are expected to have unique context objects " +
+   "different from the context of named spaces and other anonymous spaces" );
 
   valuesA = [];
   valuesB = [];
