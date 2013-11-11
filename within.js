@@ -221,8 +221,7 @@ privately(function() {
         or undefined
     */
     function space( callback ) {
-      // TODO: apply callback to [ publish, subscribe, get, set ],
-      // return result if any
+      return callback.apply( dataSpace, [ publish, subscribe, get, set ] );
     }
 
     space.publish = publish;
@@ -234,7 +233,7 @@ privately(function() {
       return space;
     }
 
-    return callback.apply( dataSpace, [ publish, subscribe, get, set ] );
+    return space( callback );
   }
 
   this.within = within;
