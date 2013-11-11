@@ -101,7 +101,9 @@ privately(function() {
   */
   function within( name, callback ) {
     var
+      // data space - object(string -> any), set of properties
       dataSpace,
+      // event space - object(string -> array of functions), event listeners
       eventSpace;
 
     if ( no( name ) ) {
@@ -235,5 +237,6 @@ privately(function() {
     return space( callback );
   }
 
+  // export to global 'this'
   this.within = within;
 });
