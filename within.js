@@ -1,6 +1,8 @@
 // https://github.com/eric-brechemier/within (License: CC0)
+//
 // within is a factory of semi-private spaces
-// where properties and events can be shared.
+// where properties and events can be shared
+// in isolation.
 //
 // Usage:
 //

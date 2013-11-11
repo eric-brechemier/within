@@ -3,7 +3,8 @@ within
 https://github.com/eric-brechemier/within
 
 within is a factory of semi-private spaces  
-where events and properties can be shared.
+where events and properties can be shared  
+in isolation.
 
 API
 ---
