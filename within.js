@@ -224,12 +224,11 @@ privately(function() {
       return callback.apply( dataSpace, [ publish, subscribe, get, set ] );
     }
 
-    space.publish = publish;
-    space.subscribe = subscribe;
-    space.get = get;
-    space.set = set;
-
     if ( arguments.length < 2 ) {
+      space.publish = publish;
+      space.subscribe = subscribe;
+      space.get = get;
+      space.set = set;
       return space;
     }
 
