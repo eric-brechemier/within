@@ -410,7 +410,7 @@ log( test(function() {
          "shortcut get is expected to return the value of a space property" );
 
   assert(
-    space2too.get( "ten" ) === 10,
+    get2too( "ten" ) === 10,
     "same result expected in get() parameter of callback of space function" );
 
   spaceFunction2.set( "ten", 11 );
@@ -549,19 +549,40 @@ log( test(function() {
                  " is expected to return undefined before a property is set" );
 
   anonymousFunction0.set( "zero", ZERO );
+
+  assert(
+    space0too.zero === ZERO,
+       "set() method of anonymous space " +
+       "is expected to set value in the shared data of the anonymous space" );
+
+  assert(
+    anonymousFunction0.get( "zero" ) === ZERO &&
+    get0too( "zero" ) === ZERO,
+                                        "get method of anonymous space and " +
+                    "get parameter of callback of anonymous space function " +
+                                  "are expected to return the value set by " +
+                                           "set() method of anonymous space" );
+
   set0too( "one", ONE );
 
   assert(
-    space0too.zero === ZERO &&
-    space0too.one === ONE &&
-    anonymousFunction0.get( "zero" ) === ZERO &&
-    anonymousFunction.get( "one" ) === ONE &&
-    get0too( "zero " ) === ZERO &&
-    get0too( "one" ) === ONE &&
+    space0too.one === ONE,
+                  "set() parameter of callback of anonymous space function" +
+       "is expected to set value in the shared data of the anonymous space" );
+
+  assert(
+    anonymousFunction0.get( "one" ) === ONE &&
+    get0too( "one" ) === ONE,
+                                        "get method of anonymous space and " +
+                    "get parameter of callback of anonymous space function " +
+                                  "are expected to return the value set by " +
+                   "set() parameter of callback of anonymous space function" );
+
+  assert(
     anonymousFunction00.get( "zero" ) === undefined &&
     anonymousFunction00.get( "one" ) === undefined,
-       "a value set in an anonymous space must be set only in this space " +
-                              "and not shared with other anonymous spaces" );
+                    "values set in an anonymous space must not be shared " +
+                                             "with other anonymous spaces" );
 
   unsubscribeH = anonymousFunction0.subscribe( "zero", observerH );
   unsubscribeI = anonymousFunction00.subscribe( "zero", observerI );
@@ -572,18 +593,19 @@ log( test(function() {
              "subscribe method of anonymous spaces must return a function" );
 
   assert(
-    typeof contextH === space0too &&
+    contextH === space0too &&
     valuesH.length === 1 &&
     valuesH[ 0 ] === ZERO,
-                         "listener is expected to be triggered immediately " +
-                      "registered with subscribe method of anonymous space " +
+                                                 "listener registered with " +
+                                      "subscribe method of anonymous space " +
+                                  "is expected to be triggered immediately " +
                         "in the context of the anonymous space data object " +
                             "when the corresponding property is already set" );
 
   publish0too( "zero", 0 );
 
   assert(
-    typeof contextH === space0too &&
+    contextH === space0too &&
     valuesH.length === 2 &&
     valuesH[ 1 ] === 0,
             "listener registered with subscribe method of anonymous space " +
