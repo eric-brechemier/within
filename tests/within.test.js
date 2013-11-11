@@ -4,51 +4,80 @@ log( test(function() {
     PATH = "github.com/eric-brechemier/within/tests/",
     SPACE1 = PATH + "space1",
     SPACE2 = PATH + "space2",
+    SPACE1_VALUE1 = 'space1-value1',
+    SPACE1_VALUE2 = 'space1-value2',
+    SPACE2_VALUE = 'space2-value',
+    SPACE0_VALUE = 'space0-value',
+    result,
     space1,
     space1too,
     space2,
+    space2too,
     spaceFunction2,
-    anonymous0,
-    anonymous00,
+    anonymousFunction0,
+    space0too,
+    anonymousFunction00,
     publish1,
     publish1too,
     publish2,
+    publish2too,
+    publish0too,
     subscribe1,
     subscribe1too,
     subscribe2,
+    subscribe2too,
+    subscribe0too,
     get1,
     get1too,
     get2,
+    get2too,
+    get0too,
     set1,
     set1too,
-    set2;
+    set2,
+    set2too,
+    set0too;
 
   assert( typeof within === "function",
                                 "within is expected to be a global function");
 
-  within( SPACE1, function( publish, subscribe, get, set ) {
+  result = within( SPACE1, function( publish, subscribe, get, set ) {
     space1 = this;
     publish1 = publish;
     subscribe1 = subscribe;
     get1 = get;
     set1 = set;
+    return SPACE1_VALUE1;
   });
 
-  within( SPACE1, function( publish, subscribe, get, set ) {
+  assert( result === SPACE1_VALUE1,
+                                    "within( name, callback ) must return " +
+                                     "the same value as the callback (1/2)" );
+
+  result = within( SPACE1, function( publish, subscribe, get, set ) {
     space1too = this;
     publish1too = publish;
     subscribe1too = subscribe;
     get1too = get;
     set1too = set;
+    return SPACE1_VALUE2;
   });
 
-  within( SPACE2, function( publish, subscribe, get, set ) {
+  assert( result === SPACE1_VALUE2,
+                                    "within( name, callback ) must return " +
+                                     "the same value as the callback (2/2)" );
+
+  result = within( SPACE2, function( publish, subscribe, get, set ) {
     space2 = this;
     publish2 = publish;
     subscribe2 = subscribe;
     get2 = get;
     set2 = set;
   });
+
+  assert ( result === undefined,
+                           "within( name, callback ) must return undefined " +
+                               "when the callback does not return any value" );
 
   assert(
     typeof space1 === "object" &&
@@ -137,6 +166,8 @@ log( test(function() {
     contextF,
     contextG,
     contextH,
+    contextI,
+    contextJ,
     valuesA = [],
     valuesB = [],
     valuesC = [],
@@ -145,6 +176,8 @@ log( test(function() {
     valuesF = [],
     valuesG = [],
     valuesH = [],
+    valuesI = [],
+    valuesJ = [],
     unsubscribeA,
     unsubscribeB,
     unsubscribeC,
@@ -152,7 +185,9 @@ log( test(function() {
     unsubscribeE,
     unsubscribeF,
     unsubscribeG,
-    unsubscribeH;
+    unsubscribeH,
+    unsubscribeI,
+    unsubscribeJ;
 
   function observerA( value ) {
     contextA = this;
@@ -192,6 +227,16 @@ log( test(function() {
   function observerH( value ) {
     contextH = this;
     valuesH.push( value );
+  }
+
+  function observerI( value ) {
+    contextI = this;
+    valuesI.push( value );
+  }
+
+  function observerJ( value ) {
+    contextJ = this;
+    valuesJ.push( value );
   }
 
   unsubscribeA = subscribe1( "missing", observerA );
@@ -337,140 +382,267 @@ log( test(function() {
              "a space function with 4 methods publish, subscribe, get, set " +
              "is expected when calling within() without a callback function" );
 
+  result = spaceFunction2( function( publish, subscribe, get, set ) {
+    space2too = this;
+    publish2too = publish;
+    subscribe2too = subscribe;
+    get2too = get;
+    set2too = set;
+    return SPACE2_VALUE;
+  });
+
+  assert( result === SPACE2_VALUE,
+              "space function must return the value of the callback, if any" );
+
+  assert( space2too === space2,
+      "The same space data object is expected in callback of space function" );
+
+  assert(
+    typeof publish2too === "function" &&
+    typeof subscribe2too === "function" &&
+    typeof get2too === "function" &&
+    typeof set2too === "function",
+          "4 functions expected as parameters of callback of space function" );
+
   space2.ten = 10;
   assert(
     spaceFunction2.get( "ten" ) === 10,
          "shortcut get is expected to return the value of a space property" );
+
+  assert(
+    space2too.get( "ten" ) === 10,
+    "same result expected in get() parameter of callback of space function" );
 
   spaceFunction2.set( "ten", 11 );
   assert(
     space2.ten === 11,
             "shortcut set is expected to set the value of a space property" );
 
+  set2too( "ten", 12 );
+  assert(
+    space2.ten === 12,
+                            "set() parameter of callback of space function " +
+                      "expected to set the value of property in space data" );
+
   unsubscribeF = spaceFunction2.subscribe( "one", observerF );
+  unsubscribeG = subscribe2too( "one", observerG );
 
   assert(
     typeof unsubscribeF === "function",
                        "shortcut subscribe is expected to return a function" );
 
+  assert(
+    typeof unsubscribeG === "function",
+                      "subscribe() function of callback of space function " +
+                                         "is expected to return a function" );
+
   publish2( "one", "I" );
 
   assert(
     valuesE.length === 1 &&
-    valuesE[ 0 ] === "I",
+    valuesE[ 0 ] === "I" &&
     contextE === space2 &&
     valuesF.length === 1 &&
-    valuesF[ 0 ] === "I",
-    contextF === space2,
+    valuesF[ 0 ] === "I" &&
+    contextF === space2 &&
+    valuesG.length === 1 &&
+    valuesG[ 0 ] === "I" &&
+    contextG === space2,
         "listeners of second space are expected to be triggered by publish " +
-                  "whether registered by subscribe or by shortcut subscribe" );
+                                                    "whether registered by " +
+                        "subscribe of callback of within( name, callback ) " +
+                                       "subscribe method of space function " +
+                                "or subscribe of callback of space function" );
 
   spaceFunction2.publish( "one", "i" );
 
   assert(
     valuesE.length === 2 &&
-    valuesE[ 1 ] === "i",
+    valuesE[ 1 ] === "i" &&
     contextE === space2 &&
     valuesF.length === 2 &&
-    valuesF[ 1 ] === "i",
-    contextF === space2,
+    valuesF[ 1 ] === "i" &&
+    contextF === space2 &&
+    valuesG.length === 2 &&
+    valuesG[ 1 ] === "i" &&
+    contextG === space2,
     "shortcut publish is expected to trigger listeners of the space event " +
-                 "whether registered by subscribe or by shortcut subscribe" );
+                                                   "whether registered by " +
+                      "subscribe callback of within or of space function, " +
+                                 "or by subscribe method of space function" );
 
-  anonymous0 = within();
-  anonymous00 = within();
+  publish2too( "one", "|" );
+  assert(
+    valuesE.length === 3 &&
+    valuesE[ 2 ] === "|" &&
+    contextE === space2 &&
+    valuesF.length === 3 &&
+    valuesF[ 2 ] === "|" &&
+    contextF === space2 &&
+    valuesG.length === 3 &&
+    valuesG[ 2 ] === "|" &&
+    contextG === space2,
+                                   "publish of callback of space function " +
+                     "is expected to trigger listeners of the space event " +
+                                                   "whether registered by " +
+                      "subscribe callback of within or of space function, " +
+                                 "or by subscribe method of space function" );
+
+  anonymousFunction0 = within();
+  anonymousFunction00 = within();
 
   assert(
-    typeof anonymous0 === "function" &&
-    typeof anonymous0.publish === "function" &&
-    typeof anonymous0.subscribe === "function" &&
-    typeof anonymous0.get === "function" &&
-    typeof anonymous0.set === "function" &&
-    typeof anonymous00 === "function" &&
-    typeof anonymous00.publish === "function" &&
-    typeof anonymous00.subscribe === "function" &&
-    typeof anonymous00.get === "function" &&
-    typeof anonymous00.set === "function",
+    typeof anonymousFunction0 === "function" &&
+    typeof anonymousFunction0.publish === "function" &&
+    typeof anonymousFunction0.subscribe === "function" &&
+    typeof anonymousFunction0.get === "function" &&
+    typeof anonymousFunction0.set === "function" &&
+    typeof anonymousFunction00 === "function" &&
+    typeof anonymousFunction00.publish === "function" &&
+    typeof anonymousFunction00.subscribe === "function" &&
+    typeof anonymousFunction00.get === "function" &&
+    typeof anonymousFunction00.set === "function",
              "a space function with 4 methods publish, subscribe, get, set " +
                    "is expected when calling within() without any parameter" );
 
+  result = anonymousFunction0( function( publish, subscribe, get, set ) {
+    space0too = this;
+    publish0too = publish;
+    subscribe0too = subscribe;
+    get0too = get;
+    set0too = set;
+    return SPACE0_VALUE;
+  });
+
   assert(
-    anonymous0.get( "zero" ) === undefined &&
-    anonymous0.get( "one" ) === undefined &&
-    anonymous0.get( "two" ) === undefined &&
-    anonymous0.get( "three" ) === undefined &&
-    anonymous0.get( "four" ) === undefined &&
-    anonymous0.get( "ten" ) === undefined &&
-    anonymous00.get( "zero" ) === undefined &&
-    anonymous00.get( "one" ) === undefined &&
-    anonymous00.get( "two" ) === undefined &&
-    anonymous00.get( "three" ) === undefined &&
-    anonymous00.get( "four" ) === undefined &&
-    anonymous00.get( "ten" ) === undefined,
+    result === SPACE0_VALUE,
+    "result value of callback must be returned by anonymous space function" );
+
+  assert(
+    typeof publish0too === "function" &&
+    typeof subscribe0too === "function" &&
+    typeof get0too === "function" &&
+    typeof set0too === "function",
+                           "4 functions expected as parameters of callback " +
+                                               "of anonymous space function" );
+
+  assert(
+    anonymousFunction0.get( "zero" ) === undefined &&
+    anonymousFunction0.get( "one" ) === undefined &&
+    anonymousFunction0.get( "two" ) === undefined &&
+    anonymousFunction0.get( "three" ) === undefined &&
+    anonymousFunction0.get( "four" ) === undefined &&
+    anonymousFunction0.get( "ten" ) === undefined &&
+    get0too( "zero" ) === undefined &&
+    get0too( "one" ) === undefined &&
+    get0too( "two" ) === undefined &&
+    get0too( "three" ) === undefined &&
+    get0too( "four" ) === undefined &&
+    get0too( "ten" ) === undefined &&
+    anonymousFunction00.get( "zero" ) === undefined &&
+    anonymousFunction00.get( "one" ) === undefined &&
+    anonymousFunction00.get( "two" ) === undefined &&
+    anonymousFunction00.get( "three" ) === undefined &&
+    anonymousFunction00.get( "four" ) === undefined &&
+    anonymousFunction00.get( "ten" ) === undefined,
                                         "get() method of anonymous spaces " +
                  " is expected to return undefined before a property is set" );
 
-  anonymous0.set( "zero", ZERO );
+  anonymousFunction0.set( "zero", ZERO );
+  set0too( "one", ONE );
 
   assert(
-    anonymous0.get( "zero" ) === ZERO &&
-    anonymous00.get( "zero" ) === undefined,
+    space0too.zero === ZERO &&
+    space0too.one === ONE &&
+    anonymousFunction0.get( "zero" ) === ZERO &&
+    anonymousFunction.get( "one" ) === ONE &&
+    get0too( "zero " ) === ZERO &&
+    get0too( "one" ) === ONE &&
+    anonymousFunction00.get( "zero" ) === undefined &&
+    anonymousFunction00.get( "one" ) === undefined,
        "a value set in an anonymous space must be set only in this space " +
                               "and not shared with other anonymous spaces" );
 
-  unsubscribeG = anonymous0.subscribe( "zero", observerG );
-  unsubscribeH = anonymous00.subscribe( "zero", observerH );
+  unsubscribeH = anonymousFunction0.subscribe( "zero", observerH );
+  unsubscribeI = anonymousFunction00.subscribe( "zero", observerI );
 
   assert(
-    typeof unsubscribeG === "function" &&
-    typeof unsubscribeH === "function",
+    typeof unsubscribeH === "function" &&
+    typeof unsubscribeI === "function",
              "subscribe method of anonymous spaces must return a function" );
 
   assert(
-    typeof contextG === "object" &&
-    valuesG.length === 1 &&
-    valuesG[ 0 ] === ZERO,
-   "listener is expected to be triggered immediately in anonymous subscribe " +
+    typeof contextH === space0too &&
+    valuesH.length === 1 &&
+    valuesH[ 0 ] === ZERO,
+                         "listener is expected to be triggered immediately " +
+                      "registered with subscribe method of anonymous space " +
+                        "in the context of the anonymous space data object " +
                             "when the corresponding property is already set" );
 
+  publish0too( "zero", 0 );
+
   assert(
-    contextH === undefined &&
-    valuesH.length === 0,
+    typeof contextH === space0too &&
+    valuesH.length === 2 &&
+    valuesH[ 1 ] === 0,
+            "listener registered with subscribe method of anonymous space " +
+                                                "is expected to fire when " +
+               "publish parameter of callback of anonymous space is called" );
+
+  assert(
+    contextI === undefined &&
+    valuesI.length === 0,
               "a listener for the same property in another anonymous space " +
                                   "is not expected to get triggered however" );
 
-  anonymous00.publish( "zero", 0 );
+  anonymousFunction00.publish( "zero", 0 );
   assert(
-    typeof contextH === "object" &&
-    valuesH.length === 1 &&
-    valuesH[ 0 ] === 0,
+    typeof contextI === "object" &&
+    contextI.zero === 0 &&
+    valuesI.length === 1 &&
+    valuesI[ 0 ] === 0,
                   "listener is expected to fire when an event is published " +
-                                                   "in an anonymous space" );
+                                                     "in an anonymous space" );
+
+  unsubscribeJ = subscribe0too( "two", observerJ );
+
+  assert( valuesJ.length === 0,
+                            "listener registered with subscribe parameter " +
+                                 "of callback of anonymous space function " +
+                  "is not expected to trigger when the property is not set" );
+
+  anonymousFunction0.publish( "two", TWO );
 
   assert(
-    valuesG.length === 1,
-                "a listener for the same event in another anonymous space " +
-                                          "is not expected to fire however" );
+    contextJ === space0too &&
+    valuesJ.length === 1 &&
+    valuesJ[ 0 ] === TWO,
+                            "listener registered with subscribe parameter " +
+                                 "of callback of anonymous space function " +
+                                             "is expected to trigger when " +
+                           "publish method of anonymous function is called" );
+
+  publish0too( "two", 2 );
 
   assert(
-    contextG.zero === ZERO &&
-    contextH.zero === 0,
-                             "properties are expected to be set in context " +
-                                   "provided as this to anonymous listener" );
+    contextJ === space0too &&
+    valuesJ.length === 2 &&
+    valuesJ[ 1 ] === 2,
+                            "listener registered with subscribe parameter " +
+                                 "of callback of anonymous space function " +
+                                             "is expected to trigger when " +
+            "publish parameter of callback of anonymous function is called" );
 
   assert(
-    contextG !== contextA &&
-    contextG !== contextB &&
-    contextG !== contextC &&
-    contextG !== contextD &&
-    contextG !== contextE &&
-    contextG !== contextF &&
-    contextH !== contextA &&
-    contextH !== contextB &&
-    contextH !== contextC &&
-    contextH !== contextD &&
-    contextH !== contextE &&
-    contextH !== contextF,
+    contextI !== contextA &&
+    contextI !== contextB &&
+    contextI !== contextC &&
+    contextI !== contextD &&
+    contextI !== contextE &&
+    contextI !== contextF &&
+    contextI !== contextG &&
+    contextI !== contextH,
              "anonymous spaces are expected to have unique context objects " +
    "different from the context of named spaces and other anonymous spaces" );
 
@@ -482,6 +654,8 @@ log( test(function() {
   valuesF = [];
   valuesG = [];
   valuesH = [];
+  valuesI = [];
+  valuesJ = [];
 
   publish1( "four", FOUR );
   assert( get1( "four" ) === FOUR,
@@ -495,7 +669,9 @@ log( test(function() {
     valuesE.length === 0 &&
     valuesF.length === 0 &&
     valuesG.length === 0 &&
-    valuesH.length === 0,
+    valuesH.length === 0 &&
+    valuesI.length === 0 &&
+    valuesJ.length === 0,
                                               "no other listener must fire " +
                 "when an event is published without any registered listener" );
 
@@ -507,6 +683,8 @@ log( test(function() {
   unsubscribeF();
   unsubscribeG();
   unsubscribeH();
+  unsubscribeI();
+  unsubscribeJ();
 
   publish1( "missing", "The end" );
   publish1( "one", TWO );
@@ -514,8 +692,10 @@ log( test(function() {
   publish1( "two", ONE );
   publish2( "one", TWO );
   spaceFunction2.publish( "one", THREE );
-  anonymous0.publish( "two", FOUR );
-  anonymous00.publish( "four", TWO );
+  publish2too( "one", FOUR );
+  anonymousFunction0.publish( "zero", ONE );
+  anonymousFunction00.publish( "zero", TWO );
+  publish0too( "two", ZERO );
 
   assert(
     valuesA.length === 0 &&
@@ -525,7 +705,9 @@ log( test(function() {
     valuesE.length === 0 &&
     valuesF.length === 0 &&
     valuesG.length === 0 &&
-    valuesH.length === 0,
+    valuesH.length === 0 &&
+    valuesI.length === 0 &&
+    valuesJ.length === 0,
                                               "no other listener must fire " +
                 "after corresponding unsubscribe() function has been called" );
 
