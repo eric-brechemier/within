@@ -1,3 +1,4 @@
+// within.js - v1.0.0 - Stable.
 // https://github.com/eric-brechemier/within (License: CC0)
 //
 // within is a factory of semi-private spaces

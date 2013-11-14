@@ -6,6 +6,11 @@ within is a factory of semi-private spaces
 where events and properties can be shared  
 in isolation.
 
+RELEASE HISTORY
+---------------
+
+* v1.0.0 - Stable.
+
 API
 ---
 
