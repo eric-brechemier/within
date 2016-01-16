@@ -1,0 +1,452 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Within by eric-brechemier</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Within</h1>
+        <p>within is a factory of semi-private spaces where events and properties can be shared in isolation</p>
+
+        <p class="view"><a href="https://github.com/eric-brechemier/within">View the Project on GitHub <small>eric-brechemier/within</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/eric-brechemier/within/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/eric-brechemier/within/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/eric-brechemier/within">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h2>
+
+<p>Function: <code>within( name, callback )</code><br>
+Create a semi-private space to share events and properties</p>
+
+<p>Both name and callback can be omitted, resulting in three different forms
+described in the sections below.</p>
+
+<ul>
+<li><a href="#within2"><code>within( name, callback )</code>: any - run code in the space with given name</a></li>
+<li><a href="#within1"><code>within( name )</code>: function - access the space with given name</a></li>
+<li><a href="#within0"><code>within()</code>: function - access an anonymous space</a></li>
+</ul>
+
+<h3>
+<a id="within-name-callback--any" class="anchor" href="#within-name-callback--any" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within2"><code>within( name, callback )</code>: any</a>
+</h3>
+
+<p>Run the given callback in the space with given name and return the result
+of the callback (left as undefined if missing).</p>
+
+<p>This form allows to create modules that span multiple source files
+before concatenation.</p>
+
+<pre><code>// module1-part1.js
+within( "example.org/module1", function( publish, subscribe, get, set ) {
+  // definition of module 1, part 1
+});
+
+// module1-part2.js
+within( "example.org/module1", function( publish, subscribe, get, set ) {
+  // definition of module 1, part 2
+});
+
+// module1-part3.js
+within( "example.org/module1", function( publish, subscribe, get, set ) {
+  // definition of module 1, part 3
+});
+</code></pre>
+
+<p>A module is identified by a domain name and a path forming the module name
+which roughly corresponds to a space where you would be able to publish
+contents on the Web (although you don't have to):</p>
+
+<pre><code>"example.tld/hypothetic/path/to/module"
+</code></pre>
+
+<p>The intent is to avoid clashes with modules defined by different people and
+organizations, or even yourself in the future.</p>
+
+<p>The callback function runs immediately, within the context of an object
+that holds data for the module; the same object is provided in all parts
+of the module:</p>
+
+<pre><code>within( "example.org/module1", function( publish, subscribe, get, set ) {
+  // 'this' refers to semi-private module data
+});
+</code></pre>
+
+<p>Four functions are provided as arguments to the callback to interact with
+the space, publish and subscribe to events and share data within the confines
+of this shared symbolic space:</p>
+
+<ul>
+<li>
+<code>publish( name, value )</code> - set the value of a property and publish an event</li>
+<li>
+<code>subscribe( name, listener )</code> - subscribe to an event published in the space</li>
+<li>
+<code>get( name )</code> - get the value of a property in space data</li>
+<li>
+<code>set( name, value )</code> - set the value of a property in space data</li>
+</ul>
+
+<p>The <code>publish()</code> function notifies registered listeners of the occurrence of
+an event in the module together with the current value of the associated
+property. A common use case is to call <code>publish()</code> twice in a row,
+with a verb in the active form and the same verb in passive form:</p>
+
+<pre><code>publish( "start", {
+  // configuration properties
+});
+publish( "started", true );
+</code></pre>
+
+<p>Listeners for <code>"start"</code> may process provided data in turn while listeners
+for <code>"started"</code> will get notified once the processing completes:</p>
+
+<pre><code>subscribe( "start", function( config ) {
+  // configure some behavior using provided properties
+});
+
+subscribe( "started", function() {
+  // start using the configured behavior
+});
+</code></pre>
+
+<p>The value of the event is also set to the property of the same name:</p>
+
+<pre><code>subscribe( "start", function( config ) {
+  // get( "start" ) === config; // true
+});
+</code></pre>
+
+<p>When no value is provided in the call to <code>publish()</code>, it defaults to the
+boolean value <code>true</code>:</p>
+
+<pre><code>publish( "started" );
+
+subscribe( "started", function() {
+  // get( "started" ) === true; // true
+  // start using the configured behavior
+});
+</code></pre>
+
+<p>When a listener is registered for an event while the property of the same
+name has already been set, <code>subscribe()</code> fires the listener immediately
+without waiting for the next call to <code>publish()</code>:</p>
+
+<pre><code>publish( "started" );
+
+subscribe( "started", function( value ) {
+  // called immediately with the current value of the property:
+  // get( "started" ) === true;
+});
+</code></pre>
+
+<p>Note that it is also the case when the property has only been set
+and never published before:</p>
+
+<pre><code>// no call to publish( "started" ) before
+set( "started", true );
+
+subscribe( "started", function( value ) {
+  // called immediately with the current value of the property:
+  // get( "started" ) === true;
+});
+</code></pre>
+
+<p>For convenience, <code>this</code> also refers to the space data object in listeners
+for events of the module:</p>
+
+<pre><code>subscribe( "start", function() {
+  // 'this' refers to the module data
+  this.score = 0;
+});
+</code></pre>
+
+<p>The <code>get()</code> and <code>set()</code> functions simply get and set properties in the space
+data, without publishing any event. Since the data object can also be
+accessed as <code>this</code> in the callback function, properties can also be set
+and retrieved directly:</p>
+
+<pre><code>within( "example.org/module1", function( publish, subscribe, get, set ) {
+  // 'this' refers to semi-private space data
+  this.property = 'value';
+
+  // equivalent to:
+  set('property', 'value');
+});
+</code></pre>
+
+<p>The advantage of <code>get()</code> over direct access through <code>this</code> is that it only
+retrieves the value of <em>own</em> properties stored directly in the data object,
+and not the value of properties <em>inherited</em> from the Object prototype chain,
+which allows to use the data object as a hash, without tripping on
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype">special names such as 'constructor' or 'hasOwnProperty'</a>:</p>
+
+<pre><code>within( "example.org/module1", function( publish, subscribe, get, set ) {
+  // 'constructor' is inherited from Object prototype
+  typeof this.constructor === 'function'; // true
+
+  // inherited properties are ignored by get()
+  typeof get('constructor') === 'function'; // false
+});
+</code></pre>
+
+<p>The advantage of <code>set()</code> compared with directly setting a value through <code>this</code>
+is that the <code>set()</code> function remains accessible in all functions defined
+within the callback function provided as argument to <code>within()</code>, unlike <code>this</code>
+which varies as the calling context of each function changes:</p>
+
+<pre><code>within( "example.org/module1", function( publish, subscribe, get, set ){
+
+  // 'this' refers to space data
+  // get() and set() allow to get/set properties in space data
+
+  function innerFunction() {
+    // 'this' no longer refers to space data
+    // get() and set() still allow to get/set properties in space data
+  }
+
+  innerFunction();
+});
+</code></pre>
+
+<h3>
+<a id="within-name--function" class="anchor" href="#within-name--function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within1"><code>within( name )</code>: function</a>
+</h3>
+
+<p>Access the space with given name.</p>
+
+<p>The space function can be called to run code in the space.
+It returns the result of the callback, if any:</p>
+
+<pre><code>var space = within( "example.org/module1" );
+
+// run code in the space "example.org/module1"
+var value = space(function( publish, subscribe, get, set ) {
+  var result;
+  ...
+  return result;
+});
+</code></pre>
+
+<p>which is equivalent to:</p>
+
+<pre><code>// run code in the space "example.org/module1"
+var value = within( "example.org/module1", function( pub, sub, get, set ) {
+  var result;
+  ...
+  return result;
+});
+</code></pre>
+
+<p>The space has four methods which are the same functions provided as
+parameters to the callback: <code>publish</code>, <code>subscribe</code>, <code>get</code>, <code>set</code>.</p>
+
+<p>This is a shortcut intended for use in debugging:</p>
+
+<pre><code>console.log( within( "example.org/game" ).get( "score" ) );
+within( "example.org/game" ).set( "score", 0 );
+within( "example.org/game" ).subscribe( "bonus", function( bonus ){
+  console.log( bonus );
+});
+within( "example.org/game" ).publish( "bonus", 100 );
+</code></pre>
+
+<p>The above form is more redundant but easier to type in the console,
+due to reduced indentation level compared with the equivalent form below:</p>
+
+<pre><code>within( "example.org/game", function( publish, subscribe, get, set ){
+  console.log( get( "score" ) );
+  set( "score", 0 );
+  subscribe( "bonus", function( bonus ){
+    console.log( bonus );
+  });
+  publish( "bonus", 100 );
+});
+</code></pre>
+
+<p>The shorter form is also useful when interacting with a space from within
+another space:</p>
+
+<pre><code>within( "example.org/test", function( publish, subscribe, get, set ){
+
+  var game = within( "example.org/game" );
+
+  game.subscribe( "bonus", function( bonus ){
+    var score = game.get( "score" );
+    game.set( "score", score + bonus );
+  });
+
+  game.publish( "bonus", 100 );
+
+});
+</code></pre>
+
+<p>The short form above is more readable due to reduced nesting, and less
+confusing than the longer form below which uses the same function names
+<code>publish</code>, <code>subscribe</code>, <code>get</code>, <code>set</code> for the methods of two different spaces:</p>
+
+<pre><code>within( "example.org/test", function( publish, subscribe, get, set ){
+  // publish, subscribe, get, set are methods of space "example.org/test"
+
+  within( "example.org/game", function( publish, subscribe, get, set ){
+    // publish, subscribe, get, set are methods of "example.org/game"
+
+    subscribe( "bonus", function( bonus ){
+      var score = get( "score" );
+      set( "score", score + bonus );
+    });
+
+    publish( "bonus", 100 );
+  });
+
+});
+</code></pre>
+
+<h3>
+<a id="within-function" class="anchor" href="#within-function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within0"><code>within()</code>: function</a>
+</h3>
+
+<p>Access an anonymous space.</p>
+
+<p>The anonymous space function can be called to run code within,
+and has the four methods <code>publish</code>, <code>subscribe</code>, <code>get</code> and <code>set</code>
+to interact with the space directly.</p>
+
+<pre><code>var space = within();
+
+// run code in the anonymous space
+var value = space(function( publish, subscribe, get, set ) {
+  var result;
+  ...
+  return result;
+});
+
+// interact with the space directly
+space.set('property', 'value');
+var value = space.get('property');
+space.publish('property', value);
+space.subscribe('property', function(value){ ... });
+</code></pre>
+
+<p>Each call to within() without any argument results in the creation of a
+different anonymous space, for single use:</p>
+
+<pre><code>// 3 separate anonymous spaces,
+// with separate events and properties
+var space1 = within(); // a first anonymous space
+var space2 = within(); // a second anonymous space
+var space3 = within(); // a third anonymous space
+</code></pre>
+
+<p>No reference is kept in the factory for any anonymous space.</p>
+
+<p>References to named spaces on the other hand are preserved for the lifetime
+of the application, since there is no method provided to reset the factory at
+this point. If you want to manage this cache separately, you can use anonymous
+spaces instead, which maintains the factory in a blank state.</p>
+
+<p>An anonymous space can be created for each instance of an application,
+or more generally each instance in a collection:</p>
+
+<pre><code>function Item() {
+  var space = within(); // create a new space for single use
+
+  function publish( name, value ){
+    // publish an event only for this item
+    space.publish( name, value );
+  }
+
+  // each item can process its own events
+  // without additional filtering required
+}
+</code></pre>
+
+<p>An alternative would be to assign a different id to each item in the
+collection, and use it to customize either the event name or the data:</p>
+
+<pre><code>// customize the event name using the id
+publish( "example.org/collection/" + id, data );
+
+// the subscription must build the event name in the same way
+subscribe( "example.org/collection/" + id, function( data ) {
+  // process the event
+});
+
+// customize the data using the id
+data.id = id;
+publish( "example.org/collection", data );
+
+subscribe( "example.org/collection", function( data ) {
+  // an extra filter is required in the event subscriber
+  if ( data.id !== id ) {
+    return;
+  }
+
+  // process the event
+});
+</code></pre>
+
+<h2>
+<a id="release-history" class="anchor" href="#release-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>RELEASE HISTORY</h2>
+
+<ul>
+<li>v1.0.0 - Stable API.</li>
+</ul>
+
+<h2>
+<a id="roadmap" class="anchor" href="#roadmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>ROADMAP</h2>
+
+<ul>
+<li>v1.1.0 - Add version number in within('within.js.org').get('version')</li>
+<li>v1.2.0 - Add optional parameter in subscribe() to start the subscription
+       with the next value published, skipping current value, if any.</li>
+<li>v1.3.0 - Publish event 'missing' in 'within.js.org' to signal subscriptions
+       to a property before any value has been set.</li>
+<li>v1.4.0 - Store data spaces in within('within.js.org').get('data') and event
+       subscriptions in within('within.js.org').get('subscribers') to
+       allow listing all data spaces and subscribers for debugging purpose,
+       and deleting data spaces and subscribers to free memory if need be.</li>
+</ul>
+
+<h2>
+<a id="language" class="anchor" href="#language" aria-hidden="true"><span class="octicon octicon-link"></span></a>LANGUAGE</h2>
+
+<p>JavaScript  </p>
+
+<h2>
+<a id="author" class="anchor" href="#author" aria-hidden="true"><span class="octicon octicon-link"></span></a>AUTHOR</h2>
+
+<p>Eric Bréchemier<br>
+<a href="http://eric.brechemier.name">http://eric.brechemier.name</a></p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>LICENSE</h2>
+
+<p>CC0 - No Copyright<br>
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">https://creativecommons.org/publicdomain/zero/1.0/</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/eric-brechemier">eric-brechemier</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
