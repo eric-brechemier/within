@@ -6,24 +6,6 @@ within is a factory of semi-private spaces
 where events and properties can be shared  
 in isolation.
 
-RELEASE HISTORY
----------------
-
-* v1.0.0 - Stable API.
-
-ROADMAP
--------
-
-* v1.1.0 - Add version number in within('within.js').get('version')
-* v1.2.0 - Add optional parameter in subscribe() to start the subscription
-           with the next value published, skipping current value, if any.
-* v1.3.0 - Publish event 'missing' within 'within.js' to signal subscriptions
-           to a property before any value has been set.
-* v1.4.0 - Store data spaces in within('within.js').get('data') and event
-           subscriptions in within('within.js').get('subscribers') in order to
-           allow listing all data spaces and subscribers for debugging purpose,
-           and deleting data spaces and subscribers to free memory if need be.
-
 API
 ---
 
@@ -369,6 +351,24 @@ collection, and use it to customize either the event name or the data:
 
       // process the event
     });
+
+RELEASE HISTORY
+---------------
+
+* v1.0.0 - Stable API.
+
+ROADMAP
+-------
+
+* v1.1.0 - Add version number in within('within.js').get('version')
+* v1.2.0 - Add optional parameter in subscribe() to start the subscription
+           with the next value published, skipping current value, if any.
+* v1.3.0 - Publish event 'missing' within 'within.js' to signal subscriptions
+           to a property before any value has been set.
+* v1.4.0 - Store data spaces in within('within.js').get('data') and event
+           subscriptions in within('within.js').get('subscribers') in order to
+           allow listing all data spaces and subscribers for debugging purpose,
+           and deleting data spaces and subscribers to free memory if need be.
 
 LANGUAGE
 ---------
