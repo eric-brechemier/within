@@ -19,7 +19,7 @@ described in the sections below.
     [WITHIN2]
   * [`within( name )`: function - access the space with given name]
     [WITHIN1]
-  * [`within()`: function - access an anonymous space]
+  * [`within()`: function - create an anonymous space]
     [WITHIN0]
 
 [WITHIN2]: #within2
@@ -276,7 +276,7 @@ confusing than the longer form below which uses the same function names
 
 ### <a name="within0">`within()`: function</a>  ###
 
-Access an anonymous space.
+Create an anonymous space.
 
 The anonymous space function can be called to run code within,
 and has the four methods `publish`, `subscribe`, `get` and `set`
