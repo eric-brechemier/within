@@ -15,18 +15,18 @@ Create a semi-private space to share events and properties
 Both name and callback can be omitted, resulting in three different forms
 described in the sections below.
 
-  * [`within( name, callback )`: any - run code in the space with given name]
+  * [`within( name, callback ): any` - run code in the space with given name]
     [WITHIN2]
-  * [`within( name )`: function - access the space with given name]
+  * [`within( name ): function` - access the space with given name]
     [WITHIN1]
-  * [`within()`: function - create an anonymous space]
+  * [`within(): function` - create an anonymous space]
     [WITHIN0]
 
 [WITHIN2]: #within2
 [WITHIN1]: #within1
 [WITHIN0]: #within0
 
-### <a name="within2">`within( name, callback )`: any</a> ###
+### <a name="within2">`within( name, callback ): any`</a> ###
 
 Run the given callback in the space with given name and return the result
 of the callback (left as undefined if missing).
@@ -189,7 +189,7 @@ which varies as the calling context of each function changes:
       innerFunction();
     });
 
-### <a name="within1">`within( name )`: function</a> ###
+### <a name="within1">`within( name ): function`</a> ###
 
 Access the space with given name.
 
@@ -274,7 +274,7 @@ confusing than the longer form below which uses the same function names
 
     });
 
-### <a name="within0">`within()`: function</a>  ###
+### <a name="within0">`within(): function`</a>  ###
 
 Create an anonymous space.
 
