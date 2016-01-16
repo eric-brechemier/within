@@ -360,13 +360,13 @@ RELEASE HISTORY
 ROADMAP
 -------
 
-* v1.1.0 - Add version number in within('within.js').get('version')
+* v1.1.0 - Add version number in within('within.js.org').get('version')
 * v1.2.0 - Add optional parameter in subscribe() to start the subscription
            with the next value published, skipping current value, if any.
-* v1.3.0 - Publish event 'missing' within 'within.js' to signal subscriptions
-           to a property before any value has been set.
-* v1.4.0 - Store data spaces in within('within.js').get('data') and event
-           subscriptions in within('within.js').get('subscribers') in order to
+* v1.3.0 - Publish event 'missing' within 'within.js.org' to signal
+           subscriptions to a property before any value has been set.
+* v1.4.0 - Store data spaces in within('within.js.org').get('data') and event
+           subscriptions in within('within.js.org').get('subscribers') to
            allow listing all data spaces and subscribers for debugging purpose,
            and deleting data spaces and subscribers to free memory if need be.
 
