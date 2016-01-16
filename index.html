@@ -40,13 +40,13 @@ Create a semi-private space to share events and properties</p>
 described in the sections below.</p>
 
 <ul>
-<li><a href="#within2"><code>within( name, callback )</code>: any - run code in the space with given name</a></li>
-<li><a href="#within1"><code>within( name )</code>: function - access the space with given name</a></li>
-<li><a href="#within0"><code>within()</code>: function - access an anonymous space</a></li>
+<li><a href="#within2"><code>within( name, callback ): any</code> - run code in the space with given name</a></li>
+<li><a href="#within1"><code>within( name ): function</code> - access the space with given name</a></li>
+<li><a href="#within0"><code>within(): function</code> - create an anonymous space</a></li>
 </ul>
 
 <h3>
-<a id="within-name-callback--any" class="anchor" href="#within-name-callback--any" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within2"><code>within( name, callback )</code>: any</a>
+<a id="within-name-callback--any" class="anchor" href="#within-name-callback--any" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within2"><code>within( name, callback ): any</code></a>
 </h3>
 
 <p>Run the given callback in the space with given name and return the result
@@ -228,7 +228,7 @@ which varies as the calling context of each function changes:</p>
 </code></pre>
 
 <h3>
-<a id="within-name--function" class="anchor" href="#within-name--function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within1"><code>within( name )</code>: function</a>
+<a id="within-name--function" class="anchor" href="#within-name--function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within1"><code>within( name ): function</code></a>
 </h3>
 
 <p>Access the space with given name.</p>
@@ -321,10 +321,10 @@ confusing than the longer form below which uses the same function names
 </code></pre>
 
 <h3>
-<a id="within-function" class="anchor" href="#within-function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within0"><code>within()</code>: function</a>
+<a id="within-function" class="anchor" href="#within-function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within0"><code>within(): function</code></a>
 </h3>
 
-<p>Access an anonymous space.</p>
+<p>Create an anonymous space.</p>
 
 <p>The anonymous space function can be called to run code within,
 and has the four methods <code>publish</code>, <code>subscribe</code>, <code>get</code> and <code>set</code>
@@ -418,8 +418,8 @@ subscribe( "example.org/collection", function( data ) {
 <li>v1.1.0 - Add version number in within('within.js.org').get('version')</li>
 <li>v1.2.0 - Add optional parameter in subscribe() to start the subscription
        with the next value published, skipping current value, if any.</li>
-<li>v1.3.0 - Publish event 'missing' in 'within.js.org' to signal subscriptions
-       to a property before any value has been set.</li>
+<li>v1.3.0 - Publish event 'missing' within 'within.js.org' to signal
+       subscriptions to a property before any value has been set.</li>
 <li>v1.4.0 - Store data spaces in within('within.js.org').get('data') and event
        subscriptions in within('within.js.org').get('subscribers') to
        allow listing all data spaces and subscribers for debugging purpose,
