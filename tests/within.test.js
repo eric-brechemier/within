@@ -733,4 +733,7 @@ log( test(function() {
                                               "no other listener must fire " +
                 "after corresponding unsubscribe() function has been called" );
 
+  assert( typeof within('within.js.org').get('version') === 'string',
+             "A string property is expected for the version of the library." );
+
 }) );
