@@ -71,7 +71,7 @@ the space, publish and subscribe to events and share data within the confines
 of this shared symbolic space:
 
 * `publish( name, value )` - set the value of a property and publish an event
-* `subscribe( name, listener )` - subscribe to an event published in the space
+* `subscribe( name, listener[, now])` - subscribe to an event
 * `get( name )` - get the value of a property in space data
 * `set( name, value )` - set the value of a property in space data
 
@@ -351,6 +351,13 @@ collection, and use it to customize either the event name or the data:
 
       // process the event
     });
+
+### <a name="within_within">`within( 'within.js.org' )`</a> ###
+
+The library itself publishes useful properties and events in the
+namespace 'within.js.org' (which is the public URL of its documentation):
+
+* `version` - string, the version of the library
 
 RELEASE HISTORY
 ---------------
