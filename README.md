@@ -355,7 +355,7 @@ collection, and use it to customize either the event name or the data:
 RELEASE HISTORY
 ---------------
 
-* v1.0.0 - Stable API.
+* v1.0.0 - Stable API
 * v1.1.0 - Add version number in within('within.js.org').get('version')
 
 ROADMAP
