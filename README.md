@@ -392,9 +392,9 @@ RELEASE HISTORY
 * v1.2.0 - Add third parameter `now` to subscribe(), to delay subscriptions
 * v1.3.0 - Publish event `'missing'` within `'within.js.org'` to report
            subscriptions to a property before any value has been set.
-* v1.4.0 - Store data spaces in within('within.js.org').get('data') and event
-           subscriptions in within('within.js.org').get('subscribers') to
-           allow listing all data spaces and subscribers for debugging purpose,
+* v1.4.0 - Store data spaces in `within('within.js.org').get('data')` and
+           event subscriptions in `within('within.js.org').get('subscribers')`
+           to allow listing data spaces and subscribers for debugging purpose,
            and deleting data spaces and subscribers to free memory if need be.
 
 LANGUAGE
