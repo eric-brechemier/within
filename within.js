@@ -26,7 +26,7 @@ function privately( func ) {
 privately(function() {
   var
     WITHIN_ITSELF = 'within.js.org', // namespace for the library itself
-    WITHIN_VERSION = 'v1.3.0', // version of the library
+    WITHIN_VERSION = 'v1.4.0', // version of the library
 
     undef, // do not trust global undefined, which can be set to a value
     dataSpaces = {},
@@ -264,6 +264,8 @@ privately(function() {
     set('missing', null); // prevent 'missing' property from missing itself
     publishWithinWithin = publish;
     set('version', WITHIN_VERSION);
+    set('data', dataSpaces );
+    set('subscribers', eventSpaces );
   });
 
   // export to global 'this'

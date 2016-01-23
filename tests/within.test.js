@@ -36,10 +36,23 @@ log( test(function() {
     set1too,
     set2,
     set2too,
-    set0too;
+    set0too,
+    dataSpace,
+    eventSpace;
 
   assert( typeof within === "function",
                                 "within is expected to be a global function");
+
+  dataSpace = within( 'within.js.org' ).get('data');
+  assert( typeof dataSpace === "object",
+                        "An object is expected for the hash of data spaces" );
+
+  eventSpace = within( 'within.js.org' ).get('subscribers');
+  assert( typeof eventSpace === "object",
+                       "An object is expected for the hash of event spaces" );
+
+  assert( typeof dataSpace['within.js.org'] === "object",
+        "The space 'within.js.org' is expected to be present in data space" );
 
   result = within( SPACE1, function( publish, subscribe, get, set ) {
     space1 = this;
@@ -105,6 +118,12 @@ log( test(function() {
 
   assert( space2 !== space1,
                "a different context object is expected for different names" );
+
+  assert(
+    space1 === dataSpace[SPACE1] &&
+    space2 === dataSpace[SPACE2],
+                       "The space objects provided as context are expected " +
+                  "to be identical to space objects stored in the data hash");
 
   var
     HAS_OWN_PROPERTY = "my own property?",
@@ -262,9 +281,16 @@ log( test(function() {
 
   within('within.js.org').subscribe( 'missing', missObserver, false );
 
+  assert(
+    typeof eventSpace['within.js.org'] === "object" &&
+    eventSpace['within.js.org'].hasOwnProperty("missing") &&
+    eventSpace['within.js.org'].missing.length === 1 &&
+    eventSpace['within.js.org'].missing[ 0 ] === missObserver,
+             "Miss Observer is expected to be the only listener registered " +
+                              "for 'missing' event in space 'within.js.org'");
+
   unsubscribeA = subscribe1( "myMissingProperty", observerA );
   assert( valuesA.length === 0,  "no callback expected for missing property" );
-
   assert(
     missValues.length === 1,
                        "listener of 'missing' in 'within.js.org' must fire " +
@@ -276,6 +302,13 @@ log( test(function() {
                           "'missing' event in 'within.js.org' must include " +
                                          "the name of the space as 'space' " +
                                  "and the name of the property as 'property'");
+  assert(
+    typeof eventSpace[SPACE1] === "object" &&
+    eventSpace[SPACE1].hasOwnProperty("myMissingProperty") &&
+    eventSpace[SPACE1].myMissingProperty.length === 1 &&
+    eventSpace[SPACE1].myMissingProperty[ 0 ] === observerA,
+                                 "first observer expected to be registered " +
+                                        "for 'myMissingProperty' in space 1");
 
   unsubscribeB = subscribe1( "one", observerB );
   assert(
@@ -303,6 +336,15 @@ log( test(function() {
                                   "in the context of the space data object " +
                                               "when property is already set" +
                                         "and `now` parameter is set to true" );
+
+  assert(
+    typeof eventSpace[SPACE1] === "object" &&
+    eventSpace[SPACE1].hasOwnProperty("one") &&
+    eventSpace[SPACE1].one.length === 3 &&
+    eventSpace[SPACE1].one[ 0 ] === observerB &&
+    eventSpace[SPACE1].one[ 1 ] === observerK &&
+    eventSpace[SPACE1].one[ 2 ] === observerL,
+                "three observers are expected for property 'one' in space 1" );
 
   assert(
     missValues.length === 1,
@@ -780,6 +822,13 @@ log( test(function() {
   unsubscribeJ();
   unsubscribeK();
   unsubscribeL();
+
+  assert(
+    typeof eventSpace[SPACE1] === "object" &&
+    eventSpace[SPACE1].hasOwnProperty('one') &&
+    eventSpace[SPACE1].one.length === 0,
+                          "All observers are for property 'one' in space 1 " +
+                                   "are expected to have been unregistered" );
 
   publish1( "missing", "The end" );
   publish1( "one", TWO );

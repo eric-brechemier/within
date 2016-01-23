@@ -318,9 +318,10 @@ different anonymous space, for single use:
 No reference is kept in the factory for any anonymous space.
 
 References to named spaces on the other hand are preserved for the lifetime
-of the application, since there is no method provided to reset the factory at
-this point. If you want to manage this cache separately, you can use anonymous
-spaces instead, which maintains the factory in a blank state.
+of the application, unless you delete references to these spaces yourself
+from the two hashes `'data'` and `'subscribers` of `'within.js.org'`.
+If you want to manage this cache separately, you can use anonymous spaces
+instead, which are forgotten as soon as they are out of the factory.
 
 An anonymous space can be created for each instance of an application,
 or more generally each instance in a collection:
@@ -363,7 +364,7 @@ collection, and use it to customize either the event name or the data:
 
 ### <a name="within_within">`within( 'within.js.org' )`</a> ###
 
-The library itself publishes useful properties and events in the
+The library within.js itself publishes useful properties and events in the
 namespace 'within.js.org' (which is
 [the public URL of its documentation](http://within.js.org)):
 
@@ -373,6 +374,15 @@ namespace 'within.js.org' (which is
   property has been set. The event object has two properties:
   * space - string, the name of the data space
   * property - string, the name of the property with no value
+* `data` - object, hash of all named data spaces; each property is the
+           name of a data space and the value is the corresping object
+           which holds data for the space. This is the same object provided
+           as context to functions which run `within()` this space.
+* `subscribers` - object, hash of data space names to objects which store
+                  the lists of subscribers for each property of the space;
+                  these objects are themselves hashes where property names
+                  are associated with arrays of functions subcribed to the
+                  corresponding events.
 
 RELEASE HISTORY
 ---------------
@@ -382,10 +392,6 @@ RELEASE HISTORY
 * v1.2.0 - Add third parameter `now` to subscribe(), to delay subscriptions
 * v1.3.0 - Publish event `'missing'` within `'within.js.org'` to report
            subscriptions to a property before any value has been set.
-
-ROADMAP
--------
-
 * v1.4.0 - Store data spaces in within('within.js.org').get('data') and event
            subscriptions in within('within.js.org').get('subscribers') to
            allow listing all data spaces and subscribers for debugging purpose,
