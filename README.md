@@ -369,10 +369,10 @@ namespace 'within.js.org' (which is
 
 * `version` - string, the version of the library
 * `missing` - object, initially null, value of the `'missing'` event
-              published when a subscription is created before the target
-              property has been set. The event object has two properties:
-                o space - string, the name of the data space
-                o property - string, the name of the property with no value
+  published when a subscription is created before the target
+  property has been set. The event object has two properties:
+  * space - string, the name of the data space
+  * property - string, the name of the property with no value
 
 RELEASE HISTORY
 ---------------
