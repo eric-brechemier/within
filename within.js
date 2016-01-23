@@ -26,7 +26,7 @@ function privately( func ) {
 privately(function() {
   var
     WITHIN_ITSELF = 'within.js.org', // namespace for the library itself
-    WITHIN_VERSION = 'v1.0.0', // version of the library
+    WITHIN_VERSION = 'v1.1.0', // version of the library
 
     undef, // do not trust global undefined, which can be set to a value
     dataSpaces = {},
