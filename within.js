@@ -1,5 +1,5 @@
-// within.js - v1.0.0 - Stable.
-// https://github.com/eric-brechemier/within (License: CC0)
+// within.js (License: CC0)
+// https://github.com/eric-brechemier/within
 //
 // within is a factory of semi-private spaces
 // where properties and events can be shared
