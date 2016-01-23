@@ -25,6 +25,8 @@ function privately( func ) {
 
 privately(function() {
   var
+    WITHIN_ITSELF = 'within.js.org', // namespace for the library itself
+
     undef, // do not trust global undefined, which can be set to a value
     dataSpaces = {},
     eventSpaces = {},
