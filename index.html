@@ -31,7 +31,7 @@
       </header>
       <section>
         <h2>
-<a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>API</h2>
 
 <p>Function: <code>within( name, callback )</code><br>
 Create a semi-private space to share events and properties</p>
@@ -46,7 +46,7 @@ described in the sections below.</p>
 </ul>
 
 <h3>
-<a id="within-name-callback--any" class="anchor" href="#within-name-callback--any" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within2"><code>within( name, callback ): any</code></a>
+<a id="within-name-callback--any" class="anchor" href="#within-name-callback--any" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="within2"><code>within( name, callback ): any</code></a>
 </h3>
 
 <p>Run the given callback in the space with given name and return the result
@@ -98,7 +98,7 @@ of this shared symbolic space:</p>
 <li>
 <code>publish( name, value )</code> - set the value of a property and publish an event</li>
 <li>
-<code>subscribe( name, listener )</code> - subscribe to an event published in the space</li>
+<code>subscribe( name, listener[, now])</code> - subscribe to an event</li>
 <li>
 <code>get( name )</code> - get the value of a property in space data</li>
 <li>
@@ -170,6 +170,16 @@ subscribe( "started", function( value ) {
 });
 </code></pre>
 
+<p>This default behavior can be avoided by setting the optional third
+parameter <code>now</code> to <code>false</code> in the call to <code>subscribe()</code>:</p>
+
+<pre><code>publish( "redraw" );
+
+subscribe( "redraw", function() {
+  // subscription starts with next 'redraw' event
+}, false);
+</code></pre>
+
 <p>For convenience, <code>this</code> also refers to the space data object in listeners
 for events of the module:</p>
 
@@ -228,7 +238,7 @@ which varies as the calling context of each function changes:</p>
 </code></pre>
 
 <h3>
-<a id="within-name--function" class="anchor" href="#within-name--function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within1"><code>within( name ): function</code></a>
+<a id="within-name--function" class="anchor" href="#within-name--function" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="within1"><code>within( name ): function</code></a>
 </h3>
 
 <p>Access the space with given name.</p>
@@ -321,7 +331,7 @@ confusing than the longer form below which uses the same function names
 </code></pre>
 
 <h3>
-<a id="within-function" class="anchor" href="#within-function" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="within0"><code>within(): function</code></a>
+<a id="within-function" class="anchor" href="#within-function" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="within0"><code>within(): function</code></a>
 </h3>
 
 <p>Create an anonymous space.</p>
@@ -359,9 +369,10 @@ var space3 = within(); // a third anonymous space
 <p>No reference is kept in the factory for any anonymous space.</p>
 
 <p>References to named spaces on the other hand are preserved for the lifetime
-of the application, since there is no method provided to reset the factory at
-this point. If you want to manage this cache separately, you can use anonymous
-spaces instead, which maintains the factory in a blank state.</p>
+of the application, unless you delete references to these spaces yourself
+from the two hashes <code>'data'</code> and <code>'subscribers</code> of <code>'within.js.org'</code>.
+If you want to manage this cache separately, you can use anonymous spaces
+instead, which are forgotten as soon as they are out of the factory.</p>
 
 <p>An anonymous space can be created for each instance of an application,
 or more generally each instance in a collection:</p>
@@ -404,21 +415,49 @@ subscribe( "example.org/collection", function( data ) {
 });
 </code></pre>
 
-<h2>
-<a id="release-history" class="anchor" href="#release-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>RELEASE HISTORY</h2>
+<h3>
+<a id="within-withinjsorg-" class="anchor" href="#within-withinjsorg-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="within_within"><code>within( 'within.js.org' )</code></a>
+</h3>
+
+<p>The library within.js itself publishes useful properties and events in the
+namespace 'within.js.org' (which is
+<a href="http://within.js.org">the public URL of its documentation</a>):</p>
 
 <ul>
-<li>v1.0.0 - Stable API.</li>
+<li>
+<code>version</code> - string, the version of the library</li>
+<li>
+<code>missing</code> - object, initially null, value of the <code>'missing'</code> event
+published when a subscription is created before the target
+property has been set. The event object has two properties:
+
+<ul>
+<li>space - string, the name of the data space</li>
+<li>property - string, the name of the property with no value</li>
+</ul>
+</li>
+<li>
+<code>data</code> - object, hash of all named data spaces; each property is the
+       name of a data space and the value is the corresping object
+       which holds data for the space. This is the same object provided
+       as context to functions which run <code>within()</code> this space.</li>
+<li>
+<code>subscribers</code> - object, hash of data space names to objects which store
+              the lists of subscribers for each property of the space;
+              these objects are themselves hashes where property names
+              are associated with arrays of functions subcribed to the
+              corresponding events.</li>
 </ul>
 
 <h2>
-<a id="roadmap" class="anchor" href="#roadmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>ROADMAP</h2>
+<a id="release-history" class="anchor" href="#release-history" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RELEASE HISTORY</h2>
 
 <ul>
-<li>v1.1.0 - Add version number in within('within.js.org').get('version')</li>
-<li>v1.2.0 - Add optional parameter in subscribe() to start the subscription
-       with the next value published, skipping current value, if any.</li>
-<li>v1.3.0 - Publish event 'missing' within 'within.js.org' to signal
+<li>v1.0.0 - Stable API</li>
+<li>v1.1.0 - Add version number in <code>within('within.js.org').get('version')</code>
+</li>
+<li>v1.2.0 - Add third parameter <code>now</code> to subscribe(), to delay subscriptions</li>
+<li>v1.3.0 - Publish event <code>'missing'</code> within <code>'within.js.org'</code> to report
        subscriptions to a property before any value has been set.</li>
 <li>v1.4.0 - Store data spaces in within('within.js.org').get('data') and event
        subscriptions in within('within.js.org').get('subscribers') to
@@ -427,18 +466,18 @@ subscribe( "example.org/collection", function( data ) {
 </ul>
 
 <h2>
-<a id="language" class="anchor" href="#language" aria-hidden="true"><span class="octicon octicon-link"></span></a>LANGUAGE</h2>
+<a id="language" class="anchor" href="#language" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>LANGUAGE</h2>
 
 <p>JavaScript  </p>
 
 <h2>
-<a id="author" class="anchor" href="#author" aria-hidden="true"><span class="octicon octicon-link"></span></a>AUTHOR</h2>
+<a id="author" class="anchor" href="#author" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>AUTHOR</h2>
 
 <p>Eric Bréchemier<br>
 <a href="http://eric.brechemier.name">http://eric.brechemier.name</a></p>
 
 <h2>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>LICENSE</h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>LICENSE</h2>
 
 <p>CC0 - No Copyright<br>
 <a href="https://creativecommons.org/publicdomain/zero/1.0/">https://creativecommons.org/publicdomain/zero/1.0/</a></p>
