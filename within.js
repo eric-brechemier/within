@@ -26,7 +26,7 @@ function privately( func ) {
 privately(function() {
   var
     WITHIN_ITSELF = 'within.js.org', // namespace for the library itself
-    WITHIN_VERSION = 'v1.1.0', // version of the library
+    WITHIN_VERSION = 'v1.2.0', // version of the library
 
     undef, // do not trust global undefined, which can be set to a value
     dataSpaces = {},
@@ -37,6 +37,11 @@ privately(function() {
   // from sub/nada/no.js (CC0)
   function no( value ) {
     return value === null || value === undef;
+  }
+
+  // from sub/nadasurf/or.js (CC0)
+  function or( a, b ) {
+    return no( a )? b: a;
   }
 
   // from sub/nada/copy.js (CC0)
@@ -181,7 +186,7 @@ privately(function() {
     }
 
     /*
-      Function: subscribe( name, listener ): function
+      Function: subscribe( name, listener[, now] ): function
       Register a callback function for the event of given name
 
       Parameters:
@@ -189,24 +194,28 @@ privately(function() {
         listener - function( value ), the callback triggered in the context of
                    the module data object:
                    - immediately, if the property with given name has been set,
-                     with the value of the property as parameter
+                     with the value of the property as parameter, unless the
+                     parameter `now` is set to `false`.
                    - then each time the event with given name is published
                      until the subscription is cancelled, with the value of
                      the property when the event is published as parameter.
+        now - boolean, whether to start the subscription with current value,
+              if any, defaults to true.
 
       Returns:
         function(), the function to call to remove current callback function
         from listeners and prevent it from receiving further notifications
         for this event.
     */
-    function subscribe( name, listener ) {
+    function subscribe( name, listener, now ) {
       var listeners;
+      now = or( now, true );
       if ( !has( eventSpace, name ) ) {
         eventSpace[ name ] = [];
       }
       listeners = eventSpace[ name ];
       listeners.push( listener );
-      if ( has( dataSpace, name ) ) {
+      if ( now && has( dataSpace, name ) ) {
         call( listener, dataSpace, dataSpace[ name ] );
       }
       return function unsubscribe() {

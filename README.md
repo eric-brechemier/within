@@ -134,6 +134,15 @@ and never published before:
       // get( "started" ) === true;
     });
 
+This default behavior can be avoided by setting the optional third
+parameter `now` to `false` in the call to `subscribe()`:
+
+    publish( "redraw" );
+
+    subscribe( "redraw", function() {
+      // subscription starts with next 'redraw' event
+    }, false);
+
 For convenience, `this` also refers to the space data object in listeners
 for events of the module:
 
@@ -365,12 +374,11 @@ RELEASE HISTORY
 
 * v1.0.0 - Stable API
 * v1.1.0 - Add version number in within('within.js.org').get('version')
+* v1.2.0 - Add third parameter `now` to subscribe(), to delay subscriptions
 
 ROADMAP
 -------
 
-* v1.2.0 - Add optional parameter in subscribe() to start the subscription
-           with the next value published, skipping current value, if any.
 * v1.3.0 - Publish event 'missing' within 'within.js.org' to signal
            subscriptions to a property before any value has been set.
 * v1.4.0 - Store data spaces in within('within.js.org').get('data') and event

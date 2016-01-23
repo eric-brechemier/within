@@ -168,6 +168,8 @@ log( test(function() {
     contextH,
     contextI,
     contextJ,
+    contextK,
+    contextL,
     valuesA = [],
     valuesB = [],
     valuesC = [],
@@ -178,6 +180,8 @@ log( test(function() {
     valuesH = [],
     valuesI = [],
     valuesJ = [],
+    valuesK = [],
+    valuesL = [],
     unsubscribeA,
     unsubscribeB,
     unsubscribeC,
@@ -187,7 +191,9 @@ log( test(function() {
     unsubscribeG,
     unsubscribeH,
     unsubscribeI,
-    unsubscribeJ;
+    unsubscribeJ,
+    unsubscribeK,
+    unsubscribeL;
 
   function observerA( value ) {
     contextA = this;
@@ -239,6 +245,16 @@ log( test(function() {
     valuesJ.push( value );
   }
 
+  function observerK( value ) {
+    contextK = this;
+    valuesK.push( value );
+  }
+
+  function observerL( value ) {
+    contextL = this;
+    valuesL.push( value );
+  }
+
   unsubscribeA = subscribe1( "missing", observerA );
   assert( valuesA.length === 0,  "no callback expected for missing property" );
 
@@ -252,16 +268,41 @@ log( test(function() {
                                  "in the context of the space data object " +
                                               "when property is already set" );
 
+  unsubscribeK = subscribe1( "one", observerK, false );
+  assert( valuesK.length === 0,
+                                  "callback must not be called immediately " +
+                                             "when property is already set " +
+                                       "but `now` parameter is set to false" );
+
+  unsubscribeL = subscribe1( "one", observerL, true );
+  assert(
+    valuesL.length === 1 &&
+    valuesL[ 0 ] === ONE &&
+    contextL === space1 &&
+    contextL.one === ONE,
+                            "callback is expected to be called immediately " +
+                                  "in the context of the space data object " +
+                                              "when property is already set" +
+                                        "and `now` parameter is set to true" );
+
   set1( "one", THREE );
   assert(
-    valuesB.length === 1,
+    valuesB.length === 1 &&
+    valuesK.length === 0 &&
+    valuesL.length === 1,
             "no callback is expected when a new value is set, not published" );
 
   publish1( "one", null );
   assert(
     valuesB.length === 2 &&
+    valuesK.length === 1 &&
+    valuesL.length === 2 &&
     valuesB[ 1 ] === null &&
+    valuesK[ 0 ] === null &&
+    valuesL[ 1 ] === null &&
     contextB === space1 &&
+    contextK === space1 &&
+    contextL === space1 &&
     contextB.one === null,
            "null value is expected to be published to registered observer " +
                                  "in the context of the space data object" );
@@ -283,7 +324,9 @@ log( test(function() {
                                            "even when initial value is null" );
 
   assert(
-    valuesB.length === 2,
+    valuesB.length === 2 &&
+    valuesK.length === 1 &&
+    valuesL.length === 2,
                      "other observers are not expected to be notified again" );
 
   unsubscribeD = subscribe1( "two", observerD );
@@ -678,6 +721,8 @@ log( test(function() {
   valuesH = [];
   valuesI = [];
   valuesJ = [];
+  valuesK = [];
+  valuesL = [];
 
   publish1( "four", FOUR );
   assert( get1( "four" ) === FOUR,
@@ -693,7 +738,9 @@ log( test(function() {
     valuesG.length === 0 &&
     valuesH.length === 0 &&
     valuesI.length === 0 &&
-    valuesJ.length === 0,
+    valuesJ.length === 0 &&
+    valuesK.length === 0 &&
+    valuesL.length === 0,
                                               "no other listener must fire " +
                 "when an event is published without any registered listener" );
 
@@ -707,6 +754,8 @@ log( test(function() {
   unsubscribeH();
   unsubscribeI();
   unsubscribeJ();
+  unsubscribeK();
+  unsubscribeL();
 
   publish1( "missing", "The end" );
   publish1( "one", TWO );
@@ -729,7 +778,9 @@ log( test(function() {
     valuesG.length === 0 &&
     valuesH.length === 0 &&
     valuesI.length === 0 &&
-    valuesJ.length === 0,
+    valuesJ.length === 0 &&
+    valuesK.length === 0 &&
+    valuesL.length === 0,
                                               "no other listener must fire " +
                 "after corresponding unsubscribe() function has been called" );
 
