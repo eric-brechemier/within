@@ -355,7 +355,8 @@ collection, and use it to customize either the event name or the data:
 ### <a name="within_within">`within( 'within.js.org' )`</a> ###
 
 The library itself publishes useful properties and events in the
-namespace 'within.js.org' (which is the public URL of its documentation):
+namespace 'within.js.org' (which is
+[the public URL of its documentation](http://within.js.org)):
 
 * `version` - string, the version of the library
 
