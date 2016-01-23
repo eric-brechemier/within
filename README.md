@@ -373,7 +373,7 @@ RELEASE HISTORY
 ---------------
 
 * v1.0.0 - Stable API
-* v1.1.0 - Add version number in within('within.js.org').get('version')
+* v1.1.0 - Add version number in `within('within.js.org').get('version')`
 * v1.2.0 - Add third parameter `now` to subscribe(), to delay subscriptions
 
 ROADMAP
