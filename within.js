@@ -93,9 +93,9 @@ privately(function() {
     Create a semi-private space to share properties and events
 
     Parameters:
-      name - string, optional, name of the symbolic space:
-             a domain name and path that you control on the Web.
-             Example: "github.com/eric-brechemier/within/tests/module1"
+      spaceName - string, optional, name of the symbolic space:
+                  a domain name and path that you control on the Web.
+                  Example: "within.js.org/tests/module1"
       callback - function( publish, subscribe, get, set ), optional, function
                  called immediately in the context ('this') of the space data
                  object with four functions (described separately below) as
@@ -110,23 +110,23 @@ privately(function() {
       When no name is provided, an anonymous module is created for single use,
       for which no reference is kept in the internal space factory.
   */
-  function within( name, callback ) {
+  function within( spaceName, callback ) {
     var
       // data space - object(string -> any), set of properties
       dataSpace,
       // event space - object(string -> array of functions), event listeners
       eventSpace;
 
-    if ( no( name ) ) {
+    if ( no( spaceName ) ) {
       dataSpace = {};
       eventSpace = {};
     } else {
-      if ( !has( dataSpaces, name ) ) {
-        dataSpaces[ name ] = {};
-        eventSpaces[ name ] = {};
+      if ( !has( dataSpaces, spaceName ) ) {
+        dataSpaces[ spaceName ] = {};
+        eventSpaces[ spaceName ] = {};
       }
-      dataSpace = dataSpaces[ name ];
-      eventSpace = eventSpaces[ name ];
+      dataSpace = dataSpaces[ spaceName ];
+      eventSpace = eventSpaces[ spaceName ];
     }
 
     /*
