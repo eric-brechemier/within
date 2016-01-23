@@ -1,7 +1,7 @@
 log( test(function() {
 
   var
-    PATH = "github.com/eric-brechemier/within/tests/",
+    PATH = "within.js.org/tests/",
     SPACE1 = PATH + "space1",
     SPACE2 = PATH + "space2",
     SPACE1_VALUE1 = 'space1-value1',
