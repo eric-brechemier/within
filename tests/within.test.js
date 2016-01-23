@@ -193,7 +193,12 @@ log( test(function() {
     unsubscribeI,
     unsubscribeJ,
     unsubscribeK,
-    unsubscribeL;
+    unsubscribeL,
+    missValues = [];
+
+  function missObserver( value ) {
+    missValues.push( value );
+  }
 
   function observerA( value ) {
     contextA = this;
@@ -255,8 +260,22 @@ log( test(function() {
     valuesL.push( value );
   }
 
-  unsubscribeA = subscribe1( "missing", observerA );
+  within('within.js.org').subscribe( 'missing', missObserver, false );
+
+  unsubscribeA = subscribe1( "myMissingProperty", observerA );
   assert( valuesA.length === 0,  "no callback expected for missing property" );
+
+  assert(
+    missValues.length === 1,
+                       "listener of 'missing' in 'within.js.org' must fire " +
+                 "when a subscription is registered for a missing property." );
+  assert(
+    typeof missValues[ 0 ] === 'object' &&
+    missValues[ 0 ].space === SPACE1 &&
+    missValues[ 0 ].property === 'myMissingProperty',
+                          "'missing' event in 'within.js.org' must include " +
+                                         "the name of the space as 'space' " +
+                                 "and the name of the property as 'property'");
 
   unsubscribeB = subscribe1( "one", observerB );
   assert(
@@ -284,6 +303,11 @@ log( test(function() {
                                   "in the context of the space data object " +
                                               "when property is already set" +
                                         "and `now` parameter is set to true" );
+
+  assert(
+    missValues.length === 1,
+                  "'missing' event in 'within.js.org' must not be published " +
+                     "for subscriptions to a property which is already set." );
 
   set1( "one", THREE );
   assert(

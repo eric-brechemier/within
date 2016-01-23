@@ -26,13 +26,14 @@ function privately( func ) {
 privately(function() {
   var
     WITHIN_ITSELF = 'within.js.org', // namespace for the library itself
-    WITHIN_VERSION = 'v1.2.0', // version of the library
+    WITHIN_VERSION = 'v1.3.0', // version of the library
 
     undef, // do not trust global undefined, which can be set to a value
     dataSpaces = {},
     eventSpaces = {},
     has,
-    call;
+    call,
+    publishWithinWithin;
 
   // from sub/nada/no.js (CC0)
   function no( value ) {
@@ -215,8 +216,15 @@ privately(function() {
       }
       listeners = eventSpace[ name ];
       listeners.push( listener );
-      if ( now && has( dataSpace, name ) ) {
-        call( listener, dataSpace, dataSpace[ name ] );
+      if ( has( dataSpace, name ) ) {
+        if ( now ) {
+          call( listener, dataSpace, dataSpace[ name ] );
+        }
+      } else {
+        publishWithinWithin( 'missing', {
+          space: spaceName,
+          property: name
+        });
       }
       return function unsubscribe() {
         remove( listeners, listener );
@@ -253,6 +261,8 @@ privately(function() {
   }
 
   within(WITHIN_ITSELF, function(publish, subscribe, get, set){
+    set('missing', null); // prevent 'missing' property from missing itself
+    publishWithinWithin = publish;
     set('version', WITHIN_VERSION);
   });
 

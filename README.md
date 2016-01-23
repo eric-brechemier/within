@@ -368,6 +368,11 @@ namespace 'within.js.org' (which is
 [the public URL of its documentation](http://within.js.org)):
 
 * `version` - string, the version of the library
+* `missing` - object, initially null, value of the `'missing'` event
+              published when a subscription is created before the target
+              property has been set. The event object has two properties:
+                o space - string, the name of the data space
+                o property - string, the name of the property with no value
 
 RELEASE HISTORY
 ---------------
@@ -375,12 +380,12 @@ RELEASE HISTORY
 * v1.0.0 - Stable API
 * v1.1.0 - Add version number in `within('within.js.org').get('version')`
 * v1.2.0 - Add third parameter `now` to subscribe(), to delay subscriptions
+* v1.3.0 - Publish event `'missing'` within `'within.js.org'` to report
+           subscriptions to a property before any value has been set.
 
 ROADMAP
 -------
 
-* v1.3.0 - Publish event 'missing' within 'within.js.org' to signal
-           subscriptions to a property before any value has been set.
 * v1.4.0 - Store data spaces in within('within.js.org').get('data') and event
            subscriptions in within('within.js.org').get('subscribers') to
            allow listing all data spaces and subscribers for debugging purpose,
