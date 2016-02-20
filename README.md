@@ -72,7 +72,7 @@ of this shared symbolic space:
 
 * `publish( name[, value] )` - set the value of a property and publish an event
 * `subscribe( name, listener[, now])` - subscribe to an event
-* `get( name )` - get the value of a property in space data
+* `get( name[, callback] )` - get the value of a property in space data
 * `set( name, value )` - set the value of a property in space data
 
 The `publish()` function notifies registered listeners of the occurrence of
@@ -112,15 +112,41 @@ boolean value `true`:
       // start using the configured behavior
     });
 
-When a listener is registered for an event while the property of the same
-name has already been set, `subscribe()` fires the listener immediately
+The `subscribe()` function registers a subscription for the current and
+next values of a property. When a listener is registered while the property
+has already been set, `subscribe()` fires the listener immediately
 without waiting for the next call to `publish()`:
 
-    publish( "started" );
+    publish( "score", 0 );
 
-    subscribe( "started", function( value ) {
-      // called immediately with the current value of the property:
-      // get( "started" ) === true;
+    subscribe( "score", function( score ) {
+      // called immediately with the current score
+      // and each time a new "score" event is published
+    });
+
+The return value of `subscribe()` is a function that can be called
+to cancel the subscription at any time:
+
+    var unsubscribeFromScore = subscribe( "score", function ( score ) {
+
+      if ( score === 100 ) {
+        publish( "winner", get( "name" ) );
+        unsubscribeFromScore();
+      }
+    });
+
+It is also possible to set up a one-time subscription by calling `get()`
+with a callback:
+
+    get( "winner", function( winner ){
+      // congratulate winner
+    });
+
+This is equivalent to:
+
+    var unsubscribeFromWinner = subscribe( "winner", function( winner ) {
+      unsubscribeFromWinner();
+      // congratulate winner
     });
 
 Note that it is also the case when the property has only been set
@@ -149,6 +175,13 @@ for events of the module:
     subscribe( "start", function() {
       // 'this' refers to the module data
       this.score = 0;
+
+      publish( "started" );
+    });
+
+    get( "started", function() {
+      // 'this' refers to the module data
+      publish( "start-score", this.score );
     });
 
 The `get()` and `set()` functions simply get and set properties in the space
@@ -162,6 +195,9 @@ and retrieved directly:
 
       // equivalent to:
       set('property', 'value');
+
+      // two ways to get the value
+      get('property') === this.property; // true
     });
 
 The advantage of `get()` over direct access through `this` is that it only
@@ -389,13 +425,14 @@ RELEASE HISTORY
 
 * v1.0.0 - Stable API
 * v1.1.0 - Add version number in `within('within.js.org').get('version')`
-* v1.2.0 - Add third parameter `now` to subscribe(), to delay subscriptions
+* v1.2.0 - Add third parameter `now` to `subscribe()`, to delay subscriptions
 * v1.3.0 - Publish event `'missing'` within `'within.js.org'` to report
            subscriptions to a property before any value has been set.
 * v1.4.0 - Store data spaces in `within('within.js.org').get('data')` and
            event subscriptions in `within('within.js.org').get('subscribers')`
            to allow listing data spaces and subscribers for debugging purpose,
            and deleting data spaces and subscribers to free memory if need be.
+* v1.5.0 - Add callback parameter to `get()` for one-time subscription
 
 LANGUAGE
 ---------

@@ -140,6 +140,12 @@ log( test(function() {
     "get is expected to return undefined initially before a property is set" );
 
   set1( "one", ONE );
+
+  assert(
+    get1( "one", function(){} ) === ONE &&
+    get1( "two", function(){} ) === undefined,
+    "get must return the current value, even when a callback is provided" );
+
   set1( "two", TWO );
   set1( "three", THREE );
 
@@ -189,6 +195,9 @@ log( test(function() {
     contextJ,
     contextK,
     contextL,
+    contextM,
+    contextN,
+    contextO,
     valuesA = [],
     valuesB = [],
     valuesC = [],
@@ -201,6 +210,9 @@ log( test(function() {
     valuesJ = [],
     valuesK = [],
     valuesL = [],
+    valuesM = [],
+    valuesN = [],
+    valuesO = [],
     unsubscribeA,
     unsubscribeB,
     unsubscribeC,
@@ -279,6 +291,21 @@ log( test(function() {
     valuesL.push( value );
   }
 
+  function observerM( value ) {
+    contextM = this;
+    valuesM.push( value );
+  }
+
+  function observerN( value ) {
+    contextN = this;
+    valuesN.push( value );
+  }
+
+  function observerO( value ) {
+    contextO = this;
+    valuesO.push( value );
+  }
+
   within('within.js.org').subscribe( 'missing', missObserver, false );
 
   assert(
@@ -290,7 +317,9 @@ log( test(function() {
                               "for 'missing' event in space 'within.js.org'");
 
   unsubscribeA = subscribe1( "myMissingProperty", observerA );
-  assert( valuesA.length === 0,  "no callback expected for missing property" );
+  assert(
+    valuesA.length === 0,
+          "callback of subscribe() must not be called for missing property" );
   assert(
     missValues.length === 1,
                        "listener of 'missing' in 'within.js.org' must fire " +
@@ -310,15 +339,43 @@ log( test(function() {
                                  "first observer expected to be registered " +
                                         "for 'myMissingProperty' in space 1");
 
+  get1( "myMissingProperty", observerM );
+
+  assert(valuesM.length === 0,
+                    "get() callback must not be called for missing property");
+
+  assert(
+    missValues.length === 2 &&
+    typeof missValues[ 1 ] === 'object' &&
+    missValues[ 1 ].space === SPACE1 &&
+    missValues[ 1 ].property === 'myMissingProperty',
+                                "'missing' event must fire in the same way " +
+                                     "when get() is called with a callback " +
+                                                   " for a missing property" );
+
+  assert(
+    eventSpace[SPACE1].myMissingProperty.length === 2 &&
+    typeof eventSpace[SPACE1].myMissingProperty[ 1 ] === 'function',
+                                "second observer expected to be registered " +
+                                        "for 'myMissingProperty' in space 1");
+
   unsubscribeB = subscribe1( "one", observerB );
   assert(
     valuesB.length === 1 &&
     valuesB[ 0 ] === ONE &&
     contextB === space1 &&
     contextB.one === ONE,
-                            "callback is expected to be called immediately " +
+            "callback of subscribe() is expected to be called immediately " +
                                  "in the context of the space data object " +
-                                              "when property is already set" );
+                                             "when property is already set" );
+
+  get1( "one", observerN );
+  assert(
+    contextN === space1 &&
+    valuesN.length === 1 &&
+    valuesN[ 0 ] === ONE,
+      "get must call the callback immediately when the value is available, " +
+                                          "with the space object as context" );
 
   unsubscribeK = subscribe1( "one", observerK, false );
   assert( valuesK.length === 0,
@@ -347,7 +404,7 @@ log( test(function() {
                 "three observers are expected for property 'one' in space 1" );
 
   assert(
-    missValues.length === 1,
+    missValues.length === 2,
                   "'missing' event in 'within.js.org' must not be published " +
                      "for subscriptions to a property which is already set." );
 
@@ -394,6 +451,11 @@ log( test(function() {
     valuesK.length === 1 &&
     valuesL.length === 2,
                      "other observers are not expected to be notified again" );
+
+  assert(
+    valuesM.length === 0 &&
+    valuesN.length === 1,
+    "one-time subscriptions in get() are expected to be called at most once" );
 
   unsubscribeD = subscribe1( "two", observerD );
   unsubscribeE = subscribe2( "one", observerE );
@@ -657,6 +719,8 @@ log( test(function() {
                                         "get() method of anonymous spaces " +
                  " is expected to return undefined before a property is set" );
 
+  anonymousFunction0.get( "zero", observerO );
+
   anonymousFunction0.set( "zero", ZERO );
 
   assert(
@@ -711,14 +775,34 @@ log( test(function() {
                         "in the context of the anonymous space data object " +
                             "when the corresponding property is already set" );
 
+  assert(
+    valuesO.length === 0,
+      "one-time subscription must not trigger before event is published, " +
+                                     "when the value is initially missing" );
+
   publish0too( "zero", 0 );
 
   assert(
+    contextO === space0too &&
+    valuesO.length === 1 &&
+    valuesO[ 0 ] === 0,
+                     "one-time subscription must trigger when the property " +
+                                  "which was initially missing is published");
+
+  publish0too( "zero", ZERO );
+
+  assert(
+    valuesO.length === 1,
+                             "one-time subscription must not trigger again " +
+                                "when the same property is published again." );
+
+  assert(
     contextH === space0too &&
-    valuesH.length === 2 &&
-    valuesH[ 1 ] === 0,
+    valuesH.length === 3 &&
+    valuesH[ 1 ] === 0 &&
+    valuesH[ 2 ] === ZERO,
             "listener registered with subscribe method of anonymous space " +
-                                                "is expected to fire when " +
+                                      "is expected to fire each time when " +
                "publish parameter of callback of anonymous space is called" );
 
   assert(

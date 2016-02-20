@@ -26,7 +26,7 @@ function privately( func ) {
 privately(function() {
   var
     WITHIN_ITSELF = 'within.js.org', // namespace for the library itself
-    WITHIN_VERSION = 'v1.4.0', // version of the library
+    WITHIN_VERSION = 'v1.5.0', // version of the library
 
     undef, // do not trust global undefined, which can be set to a value
     dataSpaces = {},
@@ -131,24 +131,6 @@ privately(function() {
     }
 
     /*
-      Function: get( name ): any
-      Retrieve the value of a property
-
-      Parameter:
-        name - string, the name of a property in module data object
-
-      Returns:
-        any, the value of the property with given name
-        in the own properties of the module data object
-    */
-    function get( name ) {
-      if ( !has( dataSpace, name ) ){
-        return undef;
-      }
-      return dataSpace[ name ];
-    }
-
-    /*
       Function: set( name, value )
       Set the value of a property of the module
 
@@ -229,6 +211,38 @@ privately(function() {
       return function unsubscribe() {
         remove( listeners, listener );
       };
+    }
+
+    /*
+      Function: get( name[, callback] ): any
+      Retrieve the value of a property
+
+      Parameters:
+        name - string, the name of a property in module data object
+        callback - optional, function( value ), callback called, just once,
+                   with the value of the property, immediately when available,
+                   or as soon as it gets published, otherwise
+                   (this is equivalent to a one-time subscription)
+
+      Returns:
+        any, the current value of the property with given name
+        (read only from own properties of the module data object)
+        of `undefined` if no value has been set
+    */
+    function get( name, callback ) {
+      if ( !has( dataSpace, name ) ){
+        if ( arguments.length > 1 ) {
+          var cancelOneTimeSubscription = subscribe( name, function( value ) {
+            cancelOneTimeSubscription();
+            call( callback, this, value );
+          });
+        }
+        return undef;
+      }
+      if ( arguments.length > 1 ) {
+        call( callback, dataSpace, dataSpace[ name ] );
+      }
+      return dataSpace[ name ];
     }
 
     /*
