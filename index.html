@@ -96,11 +96,11 @@ of this shared symbolic space:</p>
 
 <ul>
 <li>
-<code>publish( name, value )</code> - set the value of a property and publish an event</li>
+<code>publish( name[, value] )</code> - set the value of a property and publish an event</li>
 <li>
 <code>subscribe( name, listener[, now])</code> - subscribe to an event</li>
 <li>
-<code>get( name )</code> - get the value of a property in space data</li>
+<code>get( name[, callback] )</code> - get the value of a property in space data</li>
 <li>
 <code>set( name, value )</code> - set the value of a property in space data</li>
 </ul>
@@ -113,7 +113,7 @@ with a verb in the active form and the same verb in passive form:</p>
 <pre><code>publish( "start", {
   // configuration properties
 });
-publish( "started", true );
+publish( "started" );
 </code></pre>
 
 <p>Listeners for <code>"start"</code> may process provided data in turn while listeners
@@ -146,15 +146,44 @@ subscribe( "started", function() {
 });
 </code></pre>
 
-<p>When a listener is registered for an event while the property of the same
-name has already been set, <code>subscribe()</code> fires the listener immediately
+<p>The <code>subscribe()</code> function registers a subscription for the current and
+next values of a property. When a listener is registered while the property
+has already been set, <code>subscribe()</code> fires the listener immediately
 without waiting for the next call to <code>publish()</code>:</p>
 
-<pre><code>publish( "started" );
+<pre><code>publish( "score", 0 );
 
-subscribe( "started", function( value ) {
-  // called immediately with the current value of the property:
-  // get( "started" ) === true;
+subscribe( "score", function( score ) {
+  // called immediately with the current score
+  // and each time a new "score" event is published
+});
+</code></pre>
+
+<p>The return value of <code>subscribe()</code> is a function that can be called
+to cancel the subscription at any time:</p>
+
+<pre><code>var unsubscribeFromScore = subscribe( "score", function ( score ) {
+
+  if ( score === 100 ) {
+    publish( "winner", get( "name" ) );
+    unsubscribeFromScore();
+  }
+});
+</code></pre>
+
+<p>It is also possible to set up a one-time subscription by calling <code>get()</code>
+with a callback:</p>
+
+<pre><code>get( "winner", function( winner ){
+  // congratulate winner
+});
+</code></pre>
+
+<p>This is equivalent to:</p>
+
+<pre><code>var unsubscribeFromWinner = subscribe( "winner", function( winner ) {
+  unsubscribeFromWinner();
+  // congratulate winner
 });
 </code></pre>
 
@@ -186,6 +215,13 @@ for events of the module:</p>
 <pre><code>subscribe( "start", function() {
   // 'this' refers to the module data
   this.score = 0;
+
+  publish( "started" );
+});
+
+get( "started", function() {
+  // 'this' refers to the module data
+  publish( "start-score", this.score );
 });
 </code></pre>
 
@@ -200,6 +236,9 @@ and retrieved directly:</p>
 
   // equivalent to:
   set('property', 'value');
+
+  // two ways to get the value
+  get('property') === this.property; // true
 });
 </code></pre>
 
@@ -456,13 +495,14 @@ property has been set. The event object has two properties:
 <li>v1.0.0 - Stable API</li>
 <li>v1.1.0 - Add version number in <code>within('within.js.org').get('version')</code>
 </li>
-<li>v1.2.0 - Add third parameter <code>now</code> to subscribe(), to delay subscriptions</li>
+<li>v1.2.0 - Add third parameter <code>now</code> to <code>subscribe()</code>, to delay subscriptions</li>
 <li>v1.3.0 - Publish event <code>'missing'</code> within <code>'within.js.org'</code> to report
        subscriptions to a property before any value has been set.</li>
 <li>v1.4.0 - Store data spaces in <code>within('within.js.org').get('data')</code> and
        event subscriptions in <code>within('within.js.org').get('subscribers')</code>
        to allow listing data spaces and subscribers for debugging purpose,
        and deleting data spaces and subscribers to free memory if need be.</li>
+<li>v1.5.0 - Add callback parameter to <code>get()</code> for one-time subscription</li>
 </ul>
 
 <h2>
