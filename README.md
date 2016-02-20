@@ -70,7 +70,7 @@ Four functions are provided as arguments to the callback to interact with
 the space, publish and subscribe to events and share data within the confines
 of this shared symbolic space:
 
-* `publish( name, value )` - set the value of a property and publish an event
+* `publish( name[, value] )` - set the value of a property and publish an event
 * `subscribe( name, listener[, now])` - subscribe to an event
 * `get( name )` - get the value of a property in space data
 * `set( name, value )` - set the value of a property in space data
@@ -83,7 +83,7 @@ with a verb in the active form and the same verb in passive form:
     publish( "start", {
       // configuration properties
     });
-    publish( "started", true );
+    publish( "started" );
 
 Listeners for `"start"` may process provided data in turn while listeners
 for `"started"` will get notified once the processing completes:
