@@ -433,6 +433,7 @@ RELEASE HISTORY
            to allow listing data spaces and subscribers for debugging purpose,
            and deleting data spaces and subscribers to free memory if need be.
 * v1.5.0 - Add callback parameter to `get()` for one-time subscription
+* ROADMAP - Add `call()` method for lazy evaluation of functions with arguments
 
 LANGUAGE
 ---------
